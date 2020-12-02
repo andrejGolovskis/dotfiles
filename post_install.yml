@@ -1,0 +1,88 @@
+- hosts: localhost
+  tasks:
+    # TODO: Provide environment
+#    - name: Set a hostname
+#      become: yes
+#      hostname:
+#        name: vesemir
+#    - name: Enable the RPM Fusion Free repository
+#      become: yes
+#      dnf:
+#        name: "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ansible_distribution_major_version}}.noarch.rpm"
+#        state: present
+#      when: ansible_distribution == 'Fedora'
+#    - name: Enable the RPM Fusion Non-Free repository
+#      become: yes
+#      dnf:
+#        name: "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ansible_distribution_major_version}}.noarch.rpm"
+#        state: present
+#      when: ansible_distribution == 'Fedora'
+    - name: Upgrade all packages
+      become: yes
+      dnf:
+        name: "*"
+        state: latest
+    - name: Install VM Tools
+      become: yes
+      package:
+        name: open-vm-tools
+        state: present
+    - name: Install the 'Development tools' package group
+      become: yes
+      dnf:
+        name: '@Development tools'
+        state: present
+    - name: Install RpmFusion
+      become: yes
+      dnf:
+        name: rpmfusion-free-release-tainted
+        state: present
+    - name: Install DNF Plugins core
+      become: yes
+      dnf:
+        name: dnf-plugins-core
+        state: present
+    - name: Execute the script
+      command: sh install-jetbrains-toolbox.sh
+    - name: Install latest Java
+      become: yes
+      dnf:
+        name: java-latest-openjdk
+        state: present
+    - name: Install Ripgrep
+      become: yes
+      dnf:
+        name: ripgrep
+        state: present
+    - name: Install Emacs
+      become: yes
+      dnf:
+        name: emacs
+        state: present
+    - name: Install Docker
+      become: yes
+      dnf:
+        name: emacs
+        state: present
+    # Docker
+    - name: make sure dnf-plugins.core installed
+      become: yes
+      dnf:
+        name: dnf-plugins-core
+        state: present
+    - name: install docker repository
+      become: yes
+      command: dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+    - name: make sure docker from distro is not installed
+      become: yes
+      dnf:
+        name: ['docker', 'docker-client', 'docker-client-latest', 'docker-common', 'docker-latest', 'docker-latest-logrotate', 'docker-logrotate', 'docker-selinux', 'docker-engine-selinux', 'docker-engine']
+        state: absent
+    - name: install docker
+      become: yes
+      dnf:
+        name: ["docker-ce", "docker-ce-cli", "containerd.io"]
+        state: present
+    - name: Cgroups Exception
+      become: yes
+      command: grubby --update-kernel=ALL --args="systemd.unified_cgroup_hierarchy=0"
