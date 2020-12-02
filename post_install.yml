@@ -1,22 +1,22 @@
 - hosts: localhost
   tasks:
     # TODO: Provide environment
-#    - name: Set a hostname
-#      become: yes
-#      hostname:
-#        name: vesemir
-#    - name: Enable the RPM Fusion Free repository
-#      become: yes
-#      dnf:
-#        name: "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ansible_distribution_major_version}}.noarch.rpm"
-#        state: present
-#      when: ansible_distribution == 'Fedora'
-#    - name: Enable the RPM Fusion Non-Free repository
-#      become: yes
-#      dnf:
-#        name: "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ansible_distribution_major_version}}.noarch.rpm"
-#        state: present
-#      when: ansible_distribution == 'Fedora'
+    #    - name: Set a hostname
+    #      become: yes
+    #      hostname:
+    #        name: vesemir
+    #    - name: Enable the RPM Fusion Free repository
+    #      become: yes
+    #      dnf:
+    #        name: "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ansible_distribution_major_version}}.noarch.rpm"
+    #        state: present
+    #      when: ansible_distribution == 'Fedora'
+    #    - name: Enable the RPM Fusion Non-Free repository
+    #      become: yes
+    #      dnf:
+    #        name: "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ansible_distribution_major_version}}.noarch.rpm"
+    #        state: present
+    #      when: ansible_distribution == 'Fedora'
     - name: Upgrade all packages
       become: yes
       dnf:
@@ -59,11 +59,23 @@
       dnf:
         name: emacs
         state: present
-    - name: Install Docker
-      become: yes
-      dnf:
-        name: emacs
-        state: present
+    - name: Clone Doom Emacs
+      git:
+        repo: 'https://github.com/hlissner/doom-emacs'
+        dest: ~/.emacs.d
+
+#    - name: Clone Doom Emacs config
+#      git:
+#        repo: git@github.com:andrejGolovskis/emacs-config.git
+#        dest: ~/.doom.d
+#        key_file: ~/.ssh/id_ed25519
+
+#    - name: Generate env for Doom
+#      command: '~/.emacs.d/bin/doom env'
+#
+#    - name: Install Doom Emacs
+#      command: '~/.emacs.d/bin/doom install'
+
     # Docker
     - name: make sure dnf-plugins.core installed
       become: yes
@@ -76,12 +88,12 @@
     - name: make sure docker from distro is not installed
       become: yes
       dnf:
-        name: ['docker', 'docker-client', 'docker-client-latest', 'docker-common', 'docker-latest', 'docker-latest-logrotate', 'docker-logrotate', 'docker-selinux', 'docker-engine-selinux', 'docker-engine']
+        name: [ 'docker', 'docker-client', 'docker-client-latest', 'docker-common', 'docker-latest', 'docker-latest-logrotate', 'docker-logrotate', 'docker-selinux', 'docker-engine-selinux', 'docker-engine' ]
         state: absent
     - name: install docker
       become: yes
       dnf:
-        name: ["docker-ce", "docker-ce-cli", "containerd.io"]
+        name: [ "docker-ce", "docker-ce-cli", "containerd.io" ]
         state: present
     - name: Cgroups Exception
       become: yes
