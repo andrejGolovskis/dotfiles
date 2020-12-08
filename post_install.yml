@@ -98,3 +98,22 @@
     - name: Cgroups Exception
       become: yes
       command: grubby --update-kernel=ALL --args="systemd.unified_cgroup_hierarchy=0"
+    # Before: vim /etc/fuse.conf , add allow other
+    # There are 2 ways to specify the Shared Folders mounts persistently in /etc/fstab
+        #Below there are both samples /etc/fstab line to mount a FUSE vmhgfs export.
+        #
+        #Method 1: Specifying the file system
+        #
+        #<file system> <mount point> <type> <options> <dump> <pass>
+        #
+        #    Replace <file system> with vmhgfs-fuse.
+        #    Replace <mount point> with the local file system on which the exported directory is mounted, which default replacement is to use /mnt/hgfs
+        #    Replace <type> with fuse.
+        #
+      #Example:
+      #vmhgfs-fuse    /mnt/hgfs    fuse    defaults,allow_other    0    0
+#
+#
+#    - name: Mount shared folder
+#      become: yes
+#      command: /usr/bin/vmhgfs-fuse .host:/ /home/vesemir/Shared/ -o subtype=vmhgfs-fuse,allow_other
