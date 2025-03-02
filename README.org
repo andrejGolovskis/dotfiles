@@ -1,0 +1,19 @@
+* Dotfiles
+
+** First Install
+Run setup.sh
+
+** Still missing:
+- Always start in fullscreen mode
+- Set a hostname
+- Add DE support
+- Add ssh key
+- Add keyboard support for languages
+- Add own emacs config
+- Install docker
+- Install browser
+- Install pcloud
+- Install keepassxc
+- Install spotify
+- Install Logseq
+- Use stow
