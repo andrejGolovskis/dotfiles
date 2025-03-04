@@ -1,9 +1,96 @@
 * Dotfiles
 
-** First Install
-Run setup.sh
+My dotfiles and a new machine setup scripts, using literate programming in org.
 
-** Still missing:
+
+* Core Setup
+
+Installation of core system packages
+
+- Use ~:tangle~ to remove from adding into a file
+- Use no ~:dir /sudo::~ to ask for sudo password
+- Use ~:results~ output silent to print to new buffer
+
+** Upgrade
+
+Run first update and upgrade of a system
+
+
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+sudo apt -y update
+sudo apt -y upgrade
+
+#+end_src
+
+
+
+** Essentials
+
+Install some essential packages
+
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+sudo apt -y install git
+sudo apt -y install curl
+sudo apt -y install wget
+sudo apt -y install libfuse2
+
+#+end_src
+
+** Emacs
+
+Install doom emacs
+
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+sudo apt remove -y --autoremove emacs emacs-common
+
+sudo apt install -y emacs-gtk
+sudo apt install -y ripgrep fd-find
+
+rm -rf /home/"$USER"/.emacs.d/
+git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
+
+echo "export PATH=$PATH:$HOME/.emacs.d/bin" >> ~/.bash_profile
+source ~/.bash_profile
+
+doom install
+doom doctor
+
+#+end_src
+
+** Install
+
+* Configs
+** Emacs
+
+
+
+** Setup Theme
+
+#+BEGIN_SRC emacs-lisp
+
+(setq doom-font (font-spec :family "Fira Code" :size 16))
+(setq doom-theme 'doom-solarized-light)
+
+
+(setq display-line-numbers-type t)
+
+#+END_SRC
+
+Configure org
+
+#+begin_src emacs-lisp
+
+(setq org-directory "~/org/")
+
+#+end_src
+
+* Still missing
+-
+
+** First Install
 - Always start in fullscreen mode
 - Set a hostname
 - Add DE support
