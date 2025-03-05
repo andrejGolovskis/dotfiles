@@ -1,86 +1,3 @@
-* Dotfiles
-
-My dotfiles and a new machine setup scripts, using literate programming in org.
-
-* Table of Contents
-:PROPERTIES:
-:TOC:      :include all :ignore this
-:END:
-:CONTENTS:
-
-:END:
-
-* Core Setup
-
-Installation of core system packages
-
-- Use ~:tangle~ to remove from adding into a file
-- Use no ~:dir /sudo::~ to ask for sudo password
-- Use ~:results~ output silent to print to new buffer
-
-** Upgrade
-
-Run first update and upgrade of a system
-
-#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
-
-sudo apt -y update
-sudo apt -y upgrade
-
-#+end_src
-
-** Essentials
-
-*** Upgrades
-System upgrade
-
-#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
-
-sudo apt -y install git
-sudo apt -y install curl
-sudo apt -y install wget
-sudo apt -y install libfuse2
-
-#+end_src
-
-*** Stow
-Manage symlinks
-
-#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
-
-sudo apt install -y stow
-
-#+end_src
-
-** Emacs
-
-Install doom emacs
-
-#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
-
-sudo apt remove -y --autoremove emacs emacs-common
-
-sudo apt install -y emacs-gtk
-sudo apt install -y ripgrep fd-find
-
-rm -rf /home/"$USER"/.emacs.d/
-git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
-
-echo "export PATH=$PATH:$HOME/.emacs.d/bin" >> ~/.bash_profile
-source ~/.bash_profile
-
-doom install
-doom doctor
-
-#+end_src
-
-* Emacs
-** Init
-#+PROPERTY: header-args :tangle .doom.d/init.el :mkdirp yes
-
-
-#+begin_src emacs-lisp
-
 ;;; init.el -*- lexical-binding: t; -*  -
 
 ;; This file controls what Doom modules are enabled and what order they load
@@ -262,60 +179,13 @@ doom doctor
        ;;literate
        (default +bindings +smartparens))
 
-#+end_src
-
-#+RESULTS:
-
-
-** Config
-#+PROPERTY: header-args :tangle .doom.d/config.el :mkdirp yes
-
-*** Setup theme
-
-#+BEGIN_SRC emacs-lisp
-
 (setq doom-font (font-spec :family "Fira Code" :size 16))
 (setq doom-theme 'doom-solarized-light)
 
 
 (setq display-line-numbers-type t)
 
-#+END_SRC
-
-*** Configure org
-
-#+begin_src emacs-lisp
-
 (setq org-directory "~/org/")
-
-#+end_src
-
-
-
-
-* Stow
-#+begin_src shell
 
 rm -rf ~/.doom.d
 stow .
-
-#+end_src
-
-#+RESULTS:
-
-* Still missing
-
-** First Install
-- Always start in fullscreen mode
-- Set a hostname
-- Add DE support
-- Add ssh key
-- Add keyboard support for languages
-- Add own emacs config
-- Install docker
-- Install browser
-- Install pcloud
-- Install keepassxc
-- Install spotify
-- Install Logseq
-- Use stow
