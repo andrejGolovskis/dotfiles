@@ -48,9 +48,3 @@
 (package! org-super-agenda)
 (package! org-fancy-priorities)
 (package! org-mind-map)
-(package! another-package
-  :recipe (:host github :repo "lepisma/org-books"))
-(package! enlive)
-(package! org-pomodoro)
-;;(package! org-roam)
-(package! emacsql-sqlite3)

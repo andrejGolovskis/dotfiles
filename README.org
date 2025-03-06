@@ -7,11 +7,8 @@ My dotfiles and a new machine setup scripts, using literate programming in org.
 :TOC:      :include all :ignore this
 :END:
 :CONTENTS:
-
 :END:
-
 * Core Setup
-
 Installation of core system packages
 
 - Use ~:tangle~ to remove from adding into a file
@@ -19,7 +16,6 @@ Installation of core system packages
 - Use ~:results~ output silent to print to new buffer
 
 ** Upgrade
-
 Run first update and upgrade of a system
 
 #+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
@@ -31,24 +27,34 @@ sudo apt -y upgrade
 
 ** Essentials
 
-*** Upgrades
-System upgrade
-
 #+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
 
 sudo apt -y install git
 sudo apt -y install curl
 sudo apt -y install wget
 sudo apt -y install libfuse2
+sudo apt -y install stow
 
 #+end_src
 
-*** Stow
-Manage symlinks
+*** Programs
 
 #+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
 
-sudo apt install -y stow
+# KeepassXC
+sudo add-apt-repository -y ppa:phoerious/keepassxc
+sudo apt -y update
+sudo apt -y install keepassxc
+
+# Spotify
+curl -sS https://download.spotify.com/debian/pubkey_C85668DF69375001.gpg | sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/spotify.gpg
+echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
+sudo apt-get -y update
+sudo apt-get install -y spotify-client
+
+# VeraCrypt
+sudo add-apt-repository -y ppa:unit193/encryption
+sudo apt-get install -y veracrypt
 
 #+end_src
 
@@ -74,12 +80,95 @@ doom doctor
 
 #+end_src
 
+** Shell
+
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+sudo apt-add-repository -y ppa:fish-shell/release-4
+sudo apt -y update
+sudo apt -y install fish
+
+#+end_src
+** Jetbrains
+
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+# Reference: https://github.com/nagygergo/jetbrains-toolbox-install/blob/master/jetbrains-toolbox.sh
+
+set -e
+set -o pipefail
+
+TMP_DIR="/tmp"
+INSTALL_DIR="$HOME/.local/share/JetBrains/Toolbox/bin"
+SYMLINK_DIR="$HOME/.local/bin"
+
+echo "### INSTALL JETBRAINS TOOLBOX ###"
+
+echo -e "\e[94mFetching the URL of the latest version...\e[39m"
+ARCHIVE_URL=$(curl -s 'https://data.services.jetbrains.com/products/releases?code=TBA&latest=true&type=release' | grep -Po '"linux":.*?[^\\]",' | awk -F ':' '{print $3,":"$4}'| sed 's/[", ]//g')
+ARCHIVE_FILENAME=$(basename "$ARCHIVE_URL")
+
+echo -e "\e[94mDownloading $ARCHIVE_FILENAME...\e[39m"
+rm "$TMP_DIR/$ARCHIVE_FILENAME" 2>/dev/null || true
+wget -q --show-progress -cO "$TMP_DIR/$ARCHIVE_FILENAME" "$ARCHIVE_URL"
+
+echo -e "\e[94mExtracting to $INSTALL_DIR...\e[39m"
+mkdir -p "$INSTALL_DIR"
+rm "$INSTALL_DIR/jetbrains-toolbox" 2>/dev/null || true
+tar -xzf "$TMP_DIR/$ARCHIVE_FILENAME" -C "$INSTALL_DIR" --strip-components=1
+rm "$TMP_DIR/$ARCHIVE_FILENAME"
+chmod +x "$INSTALL_DIR/jetbrains-toolbox"
+
+echo -e "\e[94mSymlinking to $SYMLINK_DIR/jetbrains-toolbox...\e[39m"
+mkdir -p $SYMLINK_DIR
+rm "$SYMLINK_DIR/jetbrains-toolbox" 2>/dev/null || true
+ln -s "$INSTALL_DIR/jetbrains-toolbox" "$SYMLINK_DIR/jetbrains-toolbox"
+
+if [ -z "$CI" ]; then
+	echo -e "\e[94mRunning for the first time to set-up...\e[39m"
+	( "$INSTALL_DIR/jetbrains-toolbox" & )
+	echo -e "\n\e[32mDone! JetBrains Toolbox should now be running, in your application list, and you can run it in terminal as jetbrains-toolbox (ensure that $SYMLINK_DIR is on your PATH)\e[39m\n"
+else
+	echo -e "\n\e[32mDone! Running in a CI -- skipped launching the AppImage.\e[39m\n"
+fi
+
+#+end_src
+
+** Browser
+#+begin_src :results output silent :cache no :tangle no :dir /sudo::
+
+
+set -e
+
+# Extract the download URL from the Vivaldi download page
+DOWNLOADURL="https://vivaldi.com/download/vivaldi-stable_amd64.deb"
+INSTALLER=$(mktemp --suffix=.vivaldi.deb)
+
+echo "Downloading Vivaldi from $DOWNLOADURL"
+
+# Download the package to the temporary file
+curl -L "$DOWNLOADURL" -o "$INSTALLER"
+
+# Install the package
+sudo dpkg -i "$INSTALLER"
+
+# Remove the temporary file
+rm "$INSTALLER"
+
+echo "Vivaldi installation complete."
+
+#+end_src
+* Stow
+#+begin_src shell :results output silent :cache no :tangle no
+
+rm -rf ~/.doom.d
+stow .
+
+#+end_src
+
 * Emacs
 ** Init
-#+PROPERTY: header-args :tangle .doom.d/init.el :mkdirp yes
-
-
-#+begin_src emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle .doom.d/init.el :mkdirp yes
 
 ;;; init.el -*- lexical-binding: t; -*  -
 
@@ -163,7 +252,7 @@ doom doctor
 
        :checkers
        syntax              ; tasing you for every semicolon you forget
-       spell             ; tasing you for misspelling mispelling
+       ;;spell             ; tasing you for misspelling mispelling
        ;;grammar           ; tasing grammar mistake every you make
 
        :tools
@@ -262,60 +351,122 @@ doom doctor
        ;;literate
        (default +bindings +smartparens))
 
-#+end_src
+#+END_SRC
+** Packages
+#+BEGIN_SRC emacs-lisp :tangle .doom.d/packages.el :mkdirp yes
 
-#+RESULTS:
+ ;; -*- no-byte-compile: t; -*-
+;;; $DOOMDIR/packages.el
 
-
-** Config
-#+PROPERTY: header-args :tangle .doom.d/config.el :mkdirp yes
-
-*** Setup theme
-
-#+BEGIN_SRC emacs-lisp
-
-(setq doom-font (font-spec :family "Fira Code" :size 16))
-(setq doom-theme 'doom-solarized-light)
+;; To install a package with Doom you must declare them here, run 'doom sync' on
+;; the command line, then restart Emacs for the changes to take effect.
+;; Alternatively, use M-x doom/reload.
 
 
-(setq display-line-numbers-type t)
+;; Doom's packages are pinned to a specific commit and updated from release to
+;; release. The `unpin!' macro allows you to unpin single packages...
+;(unpin! pinned-package)
+;; ...or multiple packages
+;(unpin! pinned-package another-pinned-package)
+;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
+;(unpin! t)
 
+
+;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
+;(package! some-package)
+
+;; To install a package directly from a particular repo, you'll need to specify
+;; a `:recipe'. You'll find documentation on what `:recipe' accepts here:
+;; https://github.com/raxod502/straight.el#the-recipe-format
+;(package! another-package
+;  :recipe (:host github :repo "username/repo"))
+
+;; If the package you are trying to install does not contain a PACKAGENAME.el
+;; file, or is located in a subdirectory of the repo, you'll need to specify
+;; `:files' in the `:recipe':
+;(package! this-package
+;  :recipe (:host github :repo "username/repo"
+;           :files ("some-file.el" "src/lisp/*.el")))
+
+;; If you'd like to disable a package included with Doom, for whatever reason,
+;; you can do so here with the `:disable' property:
+;(package! builtin-package :disable t)
+
+;; You can override the recipe of a built in package without having to specify
+;; all the properties for `:recipe'. These will inherit the rest of its recipe
+;; from Doom or MELPA/ELPA/Emacsmirror:
+;(package! builtin-package :recipe (:nonrecursive t))
+;(package! builtin-package-2 :recipe (:repo "myfork/package"))
+
+;; Specify a `:branch' to install a package from a particular branch or tag.
+;; This is required for some packages whose default branch isn't 'master' (which
+;; our package manager can't deal with; see raxod502/straight.el#279)
+;(package! builtin-package :recipe (:branch "develop"))
+(package! org-super-agenda)
+(package! org-fancy-priorities)
+(package! org-mind-map)
 #+END_SRC
 
-*** Configure org
+** Config
+#+BEGIN_SRC emacs-lisp :tangle .doom.d/config.el :mkdirp yes
+;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
-#+begin_src emacs-lisp
+;; Place your private configuration here! Remember, you do not need to run 'doom
+;; sync' after modifying this file!
+
+
+;; Some functionality uses this to identify you, e.g. GPG configuration, email
+;; clients, file templates and snippets.
+
+
+(setq user-full-name "Andrej Golovskis"
+      user-mail-address "andrej@golovskis.de")
+
+
+;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
+;; are the three important ones:
+;;
+;; + `doom-font'
+;; + `doom-variable-pitch-font'
+;; + `doom-big-font' -- used for `doom-big-font-mode'; use this for
+;;   presentations or streaming.
+;;
+;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
+;; font string. You generally only need these two:
+
+(setq doom-font (font-spec :family "Fira Code" :size 24))
+(setq doom-theme 'doom-vibrant)
+
+(setq display-line-numbers-type t)
+(display-time-mode 1)
+(setq display-time-day-and-date t)
+
+
+;; If you use `org' and don't want your org files in the default location below,
+;; change `org-directory'. It must be set before org loads!
+;; (setq org-directory "~/Shared/pcloud/bestiary/")
+;; (setq org-directory "P:/_en1/journal/")
+;; (setq org-directory "~/Shared/pcloud/_en1/journal/")
+;; (setq org-roam-directory "P:/_en1/bestiary/")
+;; (setq org-directory "~/Shared/pcloud/_en1/journal/")
+
+;; This determines the style of line numbers in effect. If set to `nil', line
+;; numbers are disabled. For relative line numbers, set this to `relative'.
+
 
 (setq org-directory "~/org/")
 
-#+end_src
 
-
-
-
-* Stow
-#+begin_src shell
-
-rm -rf ~/.doom.d
-stow .
-
-#+end_src
-
-#+RESULTS:
+#+END_SRC
 
 * Still missing
-
-** First Install
 - Always start in fullscreen mode
 - Set a hostname
 - Add DE support
 - Add ssh key
 - Add keyboard support for languages
-- Add own emacs config
 - Install docker
 - Install browser
 - Install pcloud
-- Install keepassxc
 - Install spotify
 - Install Logseq
-- Use stow
