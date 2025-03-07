@@ -1,13 +1,9 @@
-* Dotfiles
 
+
+* Dotfiles
 My dotfiles and a new machine setup scripts, using literate programming in org.
 
 * Table of Contents
-:PROPERTIES:
-:TOC:      :include all :ignore this
-:END:
-:CONTENTS:
-:END:
 * Core Setup
 Installation of core system packages
 
@@ -405,6 +401,8 @@ stow .
 (package! org-super-agenda)
 (package! org-fancy-priorities)
 (package! org-mind-map)
+(package! denote)
+(package! org-make-toc)
 #+END_SRC
 
 ** Config

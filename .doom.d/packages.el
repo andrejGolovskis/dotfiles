@@ -48,3 +48,4 @@
 (package! org-super-agenda)
 (package! org-fancy-priorities)
 (package! org-mind-map)
+(package! denote)
