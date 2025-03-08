@@ -1,6 +1,6 @@
+#+AUTHOR: Andrej Golovskis
+#+auto_tangle: t
 #+STARTUP: show2levels
-
-Some change
 
 * Dotfiles
 My dotfiles and a new machine setup scripts, using literate programming in org.
@@ -401,9 +401,10 @@ stow .
 ;(package! builtin-package :recipe (:branch "develop"))
 (package! org-super-agenda)
 (package! org-fancy-priorities)
-(package! org-mind-map)
 (package! denote)
-(package! org-make-toc)
+(package! org-download)
+(package! org-auto-tangle)
+
 #+END_SRC
 
 ** Config
@@ -455,6 +456,14 @@ stow .
 
 (setq org-directory "~/org/")
 (setq denote-directory "~/_9ILLI,uK")
+
+;; Auto tangle
+(use-package org-auto-tangle
+  :defer t
+  :hook (org-mode . org-auto-tangle-mode)
+  :config
+  (setq org-auto-tangle-default t))
+
 
 #+END_SRC
 

@@ -44,5 +44,11 @@
 
 
 (setq org-directory "~/org/")
-
 (setq denote-directory "~/_9ILLI,uK")
+
+;; Auto tangle
+(use-package org-auto-tangle
+  :defer t
+  :hook (org-mode . org-auto-tangle-mode)
+  :config
+  (setq org-auto-tangle-default t))
