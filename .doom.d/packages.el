@@ -49,3 +49,4 @@
 (package! org-fancy-priorities)
 (package! org-mind-map)
 (package! denote)
+(package! org-make-toc)

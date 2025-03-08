@@ -44,3 +44,5 @@
 
 
 (setq org-directory "~/org/")
+
+(setq denote-directory "~/_9ILLI,uK")

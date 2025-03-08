@@ -1,10 +1,9 @@
-
+#+STARTUP: show2levels
 
 * Dotfiles
 My dotfiles and a new machine setup scripts, using literate programming in org.
 
-* Table of Contents
-* Core Setup
+* System
 Installation of core system packages
 
 - Use ~:tangle~ to remove from adding into a file
@@ -453,7 +452,7 @@ stow .
 
 
 (setq org-directory "~/org/")
-
+(setq denote-directory "~/_9ILLI,uK")
 
 #+END_SRC
 
@@ -464,7 +463,6 @@ stow .
 - Add ssh key
 - Add keyboard support for languages
 - Install docker
-- Install browser
 - Install pcloud
 - Install spotify
 - Install Logseq
