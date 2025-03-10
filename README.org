@@ -132,8 +132,9 @@ fi
 #+end_src
 
 ** Browser
-#+begin_src :results output silent :cache no :tangle no :dir /sudo::
+*** Vivaldi
 
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
 
 set -e
 
@@ -153,6 +154,16 @@ sudo dpkg -i "$INSTALLER"
 rm "$INSTALLER"
 
 echo "Vivaldi installation complete."
+
+#+end_src
+
+*** Brave
+
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+
+echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+
 
 #+end_src
 * Stow
@@ -440,6 +451,9 @@ stow .
 (setq display-line-numbers-type t)
 (display-time-mode 1)
 (setq display-time-day-and-date t)
+
+;; Start maximalized
+(add-hook 'window-setup-hook 'toggle-frame-maximized t)
 
 
 ;; If you use `org' and don't want your org files in the default location below,
