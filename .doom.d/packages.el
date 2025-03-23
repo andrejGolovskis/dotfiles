@@ -50,3 +50,4 @@
 (package! denote)
 (package! org-download)
 (package! org-auto-tangle)
+(package! pdf-tools)
