@@ -51,3 +51,4 @@
 (package! org-download)
 (package! org-auto-tangle)
 (package! pdf-tools)
+(package! nerd-icons)

@@ -2,7 +2,6 @@
 #+auto_tangle: t
 #+STARTUP: show2levels
 
-* Dotfiles
 My dotfiles and a new machine setup scripts, using literate programming in org.
 
 * System
@@ -12,19 +11,29 @@ Installation of core system packages
 - Use no ~:dir /sudo::~ to ask for sudo password
 - Use ~:results~ output silent to print to new buffer
 
-** Upgrade
+** Init
+Initializing everything that is needed to start emacs 
+*** Upgrade
 Run first update and upgrade of a system
 
-#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+#+begin_src shell :results output silent :cache no :tangle scripts/init.sh :mkdirp yes :dir /sudo::
 
 sudo apt -y update
 sudo apt -y upgrade
 
 #+end_src
 
-** Essentials
+#+RESULTS:
+| [33m0% | [Working][0m | Hit:1                  | http://deb.debian.org/debian | trixie                    | InRelease        |                              |                |                                            |                 |                |            |               |                |            |               |                 |            |                |         |             |                |                |               |                |                |          |                 |            |                   |                |         |            |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |       |              |            |         |                |            |         |                |            |         |                |            |         |                 |            |         |       |             |       |                |               |       |                |      |       |          |     |    |    |       |
+| [33m0% | [Waiting         | for                      | headers]                     | [Waiting                  | for              | headers][0m              | Hit:2        | http://security.debian.org/debian-security | trixie-security | InRelease      |            |               |                |            |               |                 |            |                |         |             |                |                |               |                |                |          |                 |            |                   |                |         |            |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |       |              |            |         |                |            |         |                |            |         |                |            |         |                 |            |         |       |             |       |                |               |       |                |      |       |          |     |    |    |       |
+| [33m   | 0%             | [Waiting                 | for                          | headers][0m           | Hit:3          | http://deb.debian.org/debian | trixie-updates | InRelease                                  |                 |                |            |               |                |            |               |                 |            |                |         |             |                |                |               |                |                |          |                 |            |                   |                |         |            |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |       |              |            |         |                |            |         |                |            |         |                |            |         |                 |            |         |       |             |       |                |               |       |                |      |       |          |     |    |    |       |
+| [33m   | 0%             | [Working][0m[33m0% | [Working][0m[33m0%     | [Working][0m[33m20% | [Working][0m | Reading                  | package        | lists...                                   | 0%Reading   | package        | lists...   | 0%Reading | package        | lists...   | 0%Reading | package         | lists...   | 59%Reading | package | lists...    | 59%Reading | package        | lists...      | 96%Reading | package        | lists... | 96%Reading  | package    | lists...          | 96%Reading | package | lists...   | 96%Reading | package | lists... | 96%Reading | package | lists... | 96%Reading | package | lists... | 97%Reading | package | lists... | 97%Reading | package | lists... | 97%Reading | package | lists... | 97%Reading | package | lists... | 97%Reading | package | lists... | 97%Reading | package | lists... | 97%Reading | package | lists... | 97%Reading | package | lists... | 97%Reading | package | lists... | 97%Reading | package | lists... | 97%Reading | package | lists... | 97% | Building | dependency | tree... | 0%Building | dependency | tree... | 0%Building | dependency | tree... | 0%Building | dependency | tree... | 50%Building | dependency | tree... | 50% | Reading | state | information... | 0%Reading | state | information... | 0% | All | packages | are | up | to | date. |
+| Reading  | package          | lists...                 | 0%Reading                | package                   | lists...         | 100%                       | Building   | dependency                                 | tree...         | 0%Building | dependency | tree...       | 0%Building | dependency | tree...       | 50%Building | dependency | tree...        | 50%   | Reading | state          | information... | 0%Reading | state          | information... | 0%     | Calculating | upgrade... | 0%Calculating | upgrade...     | 10%   | Summary: |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |       |              |            |         |                |            |         |                |            |         |                |            |         |                 |            |         |       |             |       |                |               |       |                |      |       |          |     |    |    |       |
+| Upgrading: | 0,               | Installing:              | 0,                           | Removing:                 | 0,               | Not                          | Upgrading:     | 0                                          |                 |                |            |               |                |            |               |                 |            |                |         |             |                |                |               |                |                |          |                 |            |                   |                |         |            |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |       |              |            |         |                |            |         |                |            |         |                |            |         |                 |            |         |       |             |       |                |               |       |                |      |       |          |     |    |    |       |
 
-#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+*** Essentials
+
+#+begin_src shell :results output silent :cache no :tangle scripts/init.sh :mkdirp yes :dir /sudo::
 
 sudo apt -y install git
 sudo apt -y install curl
@@ -34,32 +43,11 @@ sudo apt -y install stow
 
 #+end_src
 
-*** Programs
-
-#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
-
-# KeepassXC
-sudo add-apt-repository -y ppa:phoerious/keepassxc
-sudo apt -y update
-sudo apt -y install keepassxc
-
-# Spotify
-curl -sS https://download.spotify.com/debian/pubkey_C85668DF69375001.gpg | sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/spotify.gpg
-echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
-sudo apt-get -y update
-sudo apt-get install -y spotify-client
-
-# VeraCrypt
-sudo add-apt-repository -y ppa:unit193/encryption
-sudo apt-get install -y veracrypt
-
-#+end_src
-
-** Emacs
+*** Emacs
 
 Install doom emacs
 
-#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+#+begin_src shell :results output silent :cache no :tangle scripts/init.sh :mkdirp yes :dir /sudo::
 
 sudo apt remove -y --autoremove emacs emacs-common
 
@@ -74,6 +62,68 @@ source ~/.bash_profile
 
 doom install
 doom doctor
+
+#+end_src
+
+*** Stow for dotfiles
+#+begin_src shell :results output silent :cache no :tangle scripts/init.sh :mkdirp yes :dir /sudo::
+rm -rf ~/.doom.d
+stow .
+
+doom sync
+
+#+end_src
+** System
+*** Build tools
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+sudo apt install -y build-essential \
+                    cmake \
+                    libtool \
+                    libvterm-dev
+
+#+end_src
+
+*** Flatpak
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+sudo apt install flatpak
+
+# For KDE
+sudo apt install plasma-discover-backend-flatpak
+
+# Flatpak repo
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+#+end_src
+
+** Programs
+*** KeePassXC
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+# KeepassXC
+flatpak install -y --user flathub org.keepassxc.KeePassXC
+
+#+end_src
+
+*** Spotify
+
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+# Spotify
+curl -sS https://download.spotify.com/debian/pubkey_C85668DF69375001.gpg | sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/spotify.gpg
+echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
+sudo apt-get -y update
+sudo apt-get install -y spotify-client
+
+#+end_src
+*** VeraCrypt
+
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+# VeraCrypt
+sudo add-apt-repository -y ppa:unit193/encryption
+sudo apt-get install -y veracrypt
 
 #+end_src
 
@@ -166,14 +216,6 @@ echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=
 
 
 #+end_src
-* Stow
-#+begin_src shell :results output silent :cache no :tangle no
-
-rm -rf ~/.doom.d
-stow .
-
-#+end_src
-
 * Emacs
 ** Init
 #+BEGIN_SRC emacs-lisp :tangle .doom.d/init.el :mkdirp yes
@@ -416,6 +458,7 @@ stow .
 (package! org-download)
 (package! org-auto-tangle)
 (package! pdf-tools)
+(package! nerd-icons)
 
 #+END_SRC
 
@@ -502,3 +545,6 @@ stow .
 - Install pcloud
 - Install spotify
 - Install Logseq
+- Install alacraty ??
+- Remove dollars at the end
+- Create init script
