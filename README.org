@@ -23,14 +23,6 @@ sudo apt -y upgrade
 
 #+end_src
 
-#+RESULTS:
-| [33m0% | [Working][0m | Hit:1                  | http://deb.debian.org/debian | trixie                    | InRelease        |                              |                |                                            |                 |                |            |               |                |            |               |                 |            |                |         |             |                |                |               |                |                |          |                 |            |                   |                |         |            |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |       |              |            |         |                |            |         |                |            |         |                |            |         |                 |            |         |       |             |       |                |               |       |                |      |       |          |     |    |    |       |
-| [33m0% | [Waiting         | for                      | headers]                     | [Waiting                  | for              | headers][0m              | Hit:2        | http://security.debian.org/debian-security | trixie-security | InRelease      |            |               |                |            |               |                 |            |                |         |             |                |                |               |                |                |          |                 |            |                   |                |         |            |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |       |              |            |         |                |            |         |                |            |         |                |            |         |                 |            |         |       |             |       |                |               |       |                |      |       |          |     |    |    |       |
-| [33m   | 0%             | [Waiting                 | for                          | headers][0m           | Hit:3          | http://deb.debian.org/debian | trixie-updates | InRelease                                  |                 |                |            |               |                |            |               |                 |            |                |         |             |                |                |               |                |                |          |                 |            |                   |                |         |            |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |       |              |            |         |                |            |         |                |            |         |                |            |         |                 |            |         |       |             |       |                |               |       |                |      |       |          |     |    |    |       |
-| [33m   | 0%             | [Working][0m[33m0% | [Working][0m[33m0%     | [Working][0m[33m20% | [Working][0m | Reading                  | package        | lists...                                   | 0%Reading   | package        | lists...   | 0%Reading | package        | lists...   | 0%Reading | package         | lists...   | 59%Reading | package | lists...    | 59%Reading | package        | lists...      | 96%Reading | package        | lists... | 96%Reading  | package    | lists...          | 96%Reading | package | lists...   | 96%Reading | package | lists... | 96%Reading | package | lists... | 96%Reading | package | lists... | 97%Reading | package | lists... | 97%Reading | package | lists... | 97%Reading | package | lists... | 97%Reading | package | lists... | 97%Reading | package | lists... | 97%Reading | package | lists... | 97%Reading | package | lists... | 97%Reading | package | lists... | 97%Reading | package | lists... | 97%Reading | package | lists... | 97%Reading | package | lists... | 97% | Building | dependency | tree... | 0%Building | dependency | tree... | 0%Building | dependency | tree... | 0%Building | dependency | tree... | 50%Building | dependency | tree... | 50% | Reading | state | information... | 0%Reading | state | information... | 0% | All | packages | are | up | to | date. |
-| Reading  | package          | lists...                 | 0%Reading                | package                   | lists...         | 100%                       | Building   | dependency                                 | tree...         | 0%Building | dependency | tree...       | 0%Building | dependency | tree...       | 50%Building | dependency | tree...        | 50%   | Reading | state          | information... | 0%Reading | state          | information... | 0%     | Calculating | upgrade... | 0%Calculating | upgrade...     | 10%   | Summary: |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |       |              |            |         |                |            |         |                |            |         |                |            |         |                 |            |         |       |             |       |                |               |       |                |      |       |          |     |    |    |       |
-| Upgrading: | 0,               | Installing:              | 0,                           | Removing:                 | 0,               | Not                          | Upgrading:     | 0                                          |                 |                |            |               |                |            |               |                 |            |                |         |             |                |                |               |                |                |          |                 |            |                   |                |         |            |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |                |         |          |       |              |            |         |                |            |         |                |            |         |                |            |         |                 |            |         |       |             |       |                |               |       |                |      |       |          |     |    |    |       |
-
 *** Essentials
 
 #+begin_src shell :results output silent :cache no :tangle scripts/init.sh :mkdirp yes :dir /sudo::
@@ -79,7 +71,7 @@ doom sync
 
 sudo apt install -y build-essential \
                     cmake \
-                    libtool \
+                    libtool
                     libvterm-dev
 
 #+end_src
@@ -102,7 +94,7 @@ flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.f
 #+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
 
 # KeepassXC
-flatpak install -y --user flathub org.keepassxc.KeePassXC
+flatpak install -y --system flathub org.keepassxc.KeePassXC
 
 #+end_src
 
@@ -111,11 +103,7 @@ flatpak install -y --user flathub org.keepassxc.KeePassXC
 #+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
 
 # Spotify
-curl -sS https://download.spotify.com/debian/pubkey_C85668DF69375001.gpg | sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/spotify.gpg
-echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
-sudo apt-get -y update
-sudo apt-get install -y spotify-client
-
+flatpak install -y --system flathub com.spotify.Client
 #+end_src
 *** VeraCrypt
 
@@ -131,54 +119,34 @@ sudo apt-get install -y veracrypt
 
 #+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
 
-sudo apt-add-repository -y ppa:fish-shell/release-4
-sudo apt -y update
-sudo apt -y install fish
+echo 'deb http://download.opensuse.org/repositories/shells:/fish:/release:/4/Debian_13/ /' | sudo tee /etc/apt/sources.list.d/shells:fish:release:4.list
+curl -fsSL https://download.opensuse.org/repositories/shells:fish:release:4/Debian_13/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/shells_fish_release_4.gpg > /dev/null
+sudo apt update
+sudo apt install -y fish
 
 #+end_src
 ** Jetbrains
 
 #+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
 
-# Reference: https://github.com/nagygergo/jetbrains-toolbox-install/blob/master/jetbrains-toolbox.sh
-
 set -e
-set -o pipefail
 
-TMP_DIR="/tmp"
-INSTALL_DIR="$HOME/.local/share/JetBrains/Toolbox/bin"
-SYMLINK_DIR="$HOME/.local/bin"
+# Download JetBrains Toolbox
+wget -cO /tmp/jetbrains-toolbox.tar.gz "https://data.services.jetbrains.com/products/download?platform=linux&code=TBA"
 
-echo "### INSTALL JETBRAINS TOOLBOX ###"
+# Extract archive to /opt
+tar -xzf /tmp/jetbrains-toolbox.tar.gz -C /opt
 
-echo -e "\e[94mFetching the URL of the latest version...\e[39m"
-ARCHIVE_URL=$(curl -s 'https://data.services.jetbrains.com/products/releases?code=TBA&latest=true&type=release' | grep -Po '"linux":.*?[^\\]",' | awk -F ':' '{print $3,":"$4}'| sed 's/[", ]//g')
-ARCHIVE_FILENAME=$(basename "$ARCHIVE_URL")
+# Find extracted folder (e.g. /opt/jetbrains-toolbox-3.0.1.59888)
+DIR="$(ls -d /opt/jetbrains-toolbox-* | sort -V | tail -n 1)"
 
-echo -e "\e[94mDownloading $ARCHIVE_FILENAME...\e[39m"
-rm "$TMP_DIR/$ARCHIVE_FILENAME" 2>/dev/null || true
-wget -q --show-progress -cO "$TMP_DIR/$ARCHIVE_FILENAME" "$ARCHIVE_URL"
+# Run JetBrains Toolbox
+"$DIR/bin/jetbrains-toolbox" &
 
-echo -e "\e[94mExtracting to $INSTALL_DIR...\e[39m"
-mkdir -p "$INSTALL_DIR"
-rm "$INSTALL_DIR/jetbrains-toolbox" 2>/dev/null || true
-tar -xzf "$TMP_DIR/$ARCHIVE_FILENAME" -C "$INSTALL_DIR" --strip-components=1
-rm "$TMP_DIR/$ARCHIVE_FILENAME"
-chmod +x "$INSTALL_DIR/jetbrains-toolbox"
+# Cleanup archive
+rm -f /tmp/jetbrains-toolbox.tar.gz
 
-echo -e "\e[94mSymlinking to $SYMLINK_DIR/jetbrains-toolbox...\e[39m"
-mkdir -p $SYMLINK_DIR
-rm "$SYMLINK_DIR/jetbrains-toolbox" 2>/dev/null || true
-ln -s "$INSTALL_DIR/jetbrains-toolbox" "$SYMLINK_DIR/jetbrains-toolbox"
-
-if [ -z "$CI" ]; then
-	echo -e "\e[94mRunning for the first time to set-up...\e[39m"
-	( "$INSTALL_DIR/jetbrains-toolbox" & )
-	echo -e "\n\e[32mDone! JetBrains Toolbox should now be running, in your application list, and you can run it in terminal as jetbrains-toolbox (ensure that $SYMLINK_DIR is on your PATH)\e[39m\n"
-else
-	echo -e "\n\e[32mDone! Running in a CI -- skipped launching the AppImage.\e[39m\n"
-fi
-
+echo "JetBrains Toolbox installed in $DIR"
 #+end_src
 
 ** Browser
@@ -536,15 +504,11 @@ echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=
 #+END_SRC
 
 * Still missing
-- Always start in fullscreen mode
-- Set a hostname
-- Add DE support
-- Add ssh key
-- Add keyboard support for languages
-- Install docker
-- Install pcloud
-- Install spotify
-- Install Logseq
-- Install alacraty ??
-- Remove dollars at the end
-- Create init script
++ Always start in fullscreen mode
++ Set a hostname
++ Add DE support
++ Add ssh key
++ Add keyboard support for languages
++ Install docker
++ Install pcloud
++ Install alacraty ??
