@@ -123,6 +123,32 @@ docker run hello-world
 
 #+end_src
 
+*** KVM / qemu
+
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+sudo apt install -y qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager qemu-guest-agent
+sudo adduser $USER libvirt
+sudo adduser $USER kvm
+
+sudo systemctl start libvirtd
+sudo systemctl enable libvirtd
+
+#+end_src
+
+*** Ansible
+
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+sudo apt install -y qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager qemu-guest-agent
+sudo adduser $USER libvirt
+sudo adduser $USER kvm
+
+sudo systemctl start libvirtd
+sudo systemctl enable libvirtd
+
+#+end_src
+
 ** Programs
 *** KeePassXC
 #+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
@@ -151,7 +177,9 @@ sudo apt-get install -y veracrypt
 
 *** pCloud
 - Download from: https://www.pcloud.com/how-to-install-pcloud-drive-linux.html?download=electron-64
-- Start ./pcloud 
+- Start ./pcloud
+*** Creality Studio
+- Download from https://github.com/CrealityOfficial/CrealityPrint/releases latest 
 ** Shell
 
 #+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
@@ -311,7 +339,7 @@ echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=
        ;;grammar           ; tasing grammar mistake every you make
 
        :tools
-       ;;ansible
+       ansible
        ;;debugger          ; FIXME stepping through code, to help you add bugs
        ;;direnv
        docker
@@ -494,7 +522,7 @@ echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
 
-(setq doom-font (font-spec :family "Fira Code" :size 24))
+(setq doom-font (font-spec :family "Fira Code" :size 36))
 (setq doom-theme 'doom-vibrant)
 
 (setq display-line-numbers-type t)
@@ -544,7 +572,20 @@ echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=
 + Always start in fullscreen mode -> should be in qtile
 + Add ssh key
 + Add keyboard support for languages
-+ Install alacraty 
++ Install alacratty
 + Add lockscreen
 + Add qtile
-  
++ Add keepass settings support
++ mu4e support
++ magit
++ add support for shortcuts
++ Browser -> sane configs 
++ Libreoffice
++ Calculator
++ Create manual ? / cheatsheets
++ Screen capture
++ Switch wallpapers 
++ Fix freezing at beginning
++ devtoys
++ Reconfigure doom emacs
++ -> start in a server
