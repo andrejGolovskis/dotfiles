@@ -1,0 +1,8 @@
+#+title: Technical Doc
+
+* Remove results from org file
+#+begin_src emacs-lisp
+
+M-x org-babel-remove-result
+
+#+end_src

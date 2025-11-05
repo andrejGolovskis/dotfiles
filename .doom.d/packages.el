@@ -52,3 +52,4 @@
 (package! org-auto-tangle)
 (package! pdf-tools)
 (package! nerd-icons)
+(package! xterm-color)
