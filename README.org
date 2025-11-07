@@ -7,6 +7,7 @@ My dotfiles and a new machine setup scripts, using literate programming in org.
 * Table of Contents :toc:
 - [[#system][System]]
   - [[#init][Init]]
+  - [[#stow][Stow]]
   - [[#system-1][System]]
   - [[#programs][Programs]]
   - [[#shell][Shell]]
@@ -74,12 +75,20 @@ doom doctor
 *** Stow for dotfiles
 #+begin_src shell :results output silent :cache no :tangle scripts/init.sh :mkdirp yes :dir /sudo::
 rm -rf ~/.doom.d
+rm -rf ~/.qtile/config.py
 stow .
 
 doom sync
 
 #+end_src
+** Stow
+
+#+begin_src shell :results output silent :cache no :tangle scripts/init.sh :mkdirp yes :dir /sudo::
+stow .
+#+end_src
+
 ** System
+
 *** Build tools
 #+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
 
@@ -154,10 +163,17 @@ sudo systemctl enable libvirtd
 
 #+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
 
-sudo apt-get install -y software-properties-common
-sudo apt-get install -y ansible
+sudo apt install -y software-properties-common
+sudo apt install -y ansible
 
 #+end_src
+*** Qtile
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+sudo apt install -y qtile python3-psutil
+
+#+end_src
+
 
 ** Programs
 *** KeePassXC
@@ -225,38 +241,16 @@ echo "JetBrains Toolbox installed in $DIR"
 #+end_src
 
 ** Browser
-*** Vivaldi
+*** Zen
 
 #+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
 
-set -e
+sudo apt -y remove firefox-esr
+sudo apt -y purge firefox-esr
 
-# Extract the download URL from the Vivaldi download page
-DOWNLOADURL="https://vivaldi.com/download/vivaldi-stable_amd64.deb"
-INSTALLER=$(mktemp --suffix=.vivaldi.deb)
+sudo apt autoremove
 
-echo "Downloading Vivaldi from $DOWNLOADURL"
-
-# Download the package to the temporary file
-curl -L "$DOWNLOADURL" -o "$INSTALLER"
-
-# Install the package
-sudo dpkg -i "$INSTALLER"
-
-# Remove the temporary file
-rm "$INSTALLER"
-
-echo "Vivaldi installation complete."
-
-#+end_src
-
-*** Brave
-
-#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
-
-
-echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list
-
+flatpak install flathub app.zen_browser.zen
 
 #+end_src
 * Emacs
@@ -576,18 +570,6 @@ echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=
   :config (add-to-list 'revert-without-query ".pdf"))
 
 (add-hook 'pdf-view-mode-hook #' (lambda () (interactive) (display-line-numbers-mode -1)))
-
-
-;; Display colors
-(defun ek/babel-ansi ()
-  (when-let ((beg (org-babel-where-is-src-block-result nil nil)))
-    (save-excursion
-      (goto-char beg)
-      (when (looking-at org-babel-result-regexp)
-        (let ((end (org-babel-result-end))
-              (ansi-color-context-region nil))
-          (ansi-color-apply-on-region beg end))))))
-(add-hook 'org-babel-after-execute-hook 'ek/babel-ansi)
 
 #+END_SRC
 
