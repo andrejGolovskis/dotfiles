@@ -66,3 +66,8 @@
   :config (add-to-list 'revert-without-query ".pdf"))
 
 (add-hook 'pdf-view-mode-hook #' (lambda () (interactive) (display-line-numbers-mode -1)))
+
+;; Use eshell for opening a terminal window
+(map! :leader
+      :desc "Toggle Eshell popup"
+      "o t" #'+eshell/toggle)

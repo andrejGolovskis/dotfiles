@@ -396,7 +396,7 @@ flatpak install flathub app.zen_browser.zen
        ;;factor
        ;;ledger            ; an accounting system in Emacs
        ;;lua               ; one-based indices? one-based indices
-       ;; markdown          ; writing docs for people to ignore
+       markdown          ; writing docs for people to ignore
        ;;nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
@@ -570,6 +570,11 @@ flatpak install flathub app.zen_browser.zen
   :config (add-to-list 'revert-without-query ".pdf"))
 
 (add-hook 'pdf-view-mode-hook #' (lambda () (interactive) (display-line-numbers-mode -1)))
+
+;; Use eshell for opening a terminal window
+(map! :leader
+      :desc "Toggle Eshell popup"
+      "o t" #'+eshell/toggle)
 
 #+END_SRC
 

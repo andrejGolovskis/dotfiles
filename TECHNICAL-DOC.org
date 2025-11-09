@@ -6,3 +6,12 @@
 M-x org-babel-remove-result
 
 #+end_src
+
+* Open terminal
+#+begin_src
+
+SPC o t Terminal
+SPC o p Space
+SPC TAB TAB - Workspace bar
+
+#+end_src
