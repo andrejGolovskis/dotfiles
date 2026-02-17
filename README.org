@@ -88,7 +88,6 @@ stow .
 #+end_src
 
 ** System
-
 *** Build tools
 #+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
 
@@ -173,8 +172,18 @@ sudo apt install -y ansible
 sudo apt install -y qtile python3-psutil
 
 #+end_src
+*** Alacrity
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
 
+sudo apt install -y alacritty
 
+#+end_src
+*** Rofi
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+sudo apt install -y rofi
+
+#+end_src
 ** Programs
 *** KeePassXC
 #+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
@@ -577,7 +586,6 @@ flatpak install flathub app.zen_browser.zen
       "o t" #'+eshell/toggle)
 
 #+END_SRC
-
 * Still missing
 + Always start in fullscreen mode -> should be in qtile
 + Add ssh key

@@ -4,7 +4,6 @@
 # Copyright (c) 2012-2014 Tycho Andersen
 # Copyright (c) 2012 Craig Barnes
 # Copyright (c) 2013 horsik
-# Copyright (c) 2013 Tao Sauvage
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -24,17 +23,64 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from libqtile import bar, layout, qtile, widget
-from libqtile.config import Click, Drag, Group, Key, Match, Screen
+import os
+import subprocess
+import libqtile.resources
+import colors
+from libqtile import bar, extension, hook, layout, qtile, widget
+from libqtile.config import Click, Drag, Group, Key, KeyChord, Match, Screen
 from libqtile.lazy import lazy
-from libqtile.utils import guess_terminal
 
-mod = "mod4"
-terminal = guess_terminal()
+mod = "mod4"              # Sets mod key to SUPER/WINDOWS
+myTerm = "xterm"      
+myBrowser = "flatpak run app.zen_browser.zen"
+myEmacs = "emacsclient -c -a 'emacs' " # The space at the end is IMPORTANT!
 
 keys = [
-    # A list of available commands that can be bound to keys can be found
-    # at https://docs.qtile.org/en/latest/manual/config/lazy.html
+    # Terminal
+    Key([mod], "Return", lazy.spawn(myTerm), desc="Launch terminal"),
+
+    # Browser
+    Key([mod], "b", lazy.spawn(myBrowser), desc='Web browser'),
+
+    # Emacs programs launched using the key chord SUPER+e followed by 'key'
+    KeyChord([mod],"e", [
+        Key([], "e", lazy.spawn(myEmacs), desc='Emacs Dashboard'),
+        #Key([], "a", lazy.spawn(myEmacs + "--eval '(emms-play-directory-tree \"~/Music/\")'"), desc='Emacs EMMS'),
+        #Key([], "b", lazy.spawn(myEmacs + "--eval '(ibuffer)'"), desc='Emacs Ibuffer'),
+        Key([], "d", lazy.spawn(myEmacs + "--eval '(dired nil)'"), desc='Emacs Dired'),
+        #Key([], "i", lazy.spawn(myEmacs + "--eval '(erc)'"), desc='Emacs ERC'),
+        Key([], "t", lazy.spawn(myEmacs + "--eval '(eshell)'"), desc='Emacs Eshell'),
+        Key([], "v", lazy.spawn(myEmacs + "--eval '(vterm)'"), desc='Emacs Vterm'),
+        #Key([], "w", lazy.spawn(myEmacs + "--eval '(eww \"distro.tube\")'"), desc='Emacs EWW'),
+        Key([], "F4", lazy.spawn("killall emacs"),
+                      lazy.spawn("/usr/bin/emacs --daemon"),
+                      desc='Kill/restart the Emacs daemon')
+    ]),
+
+    # Rofi as default launcher    
+    Key([mod, "shift"], "Return", lazy.spawn("rofi -show drun -show-icons"), desc='Run Launcher'),
+
+    # Rofi scripts launched using the key chord SUPER+p followed by 'key'
+    KeyChord([mod], "p", [
+        Key([], "h", lazy.spawn("dm-hub -r"), desc='List all dmscripts'),
+        Key([], "a", lazy.spawn("dm-sounds -r"), desc='Choose ambient sound'),
+        Key([], "b", lazy.spawn("dm-setbg -r"), desc='Set background'),
+        Key([], "c", lazy.spawn("dtos-colorscheme -r"), desc='Choose color scheme'),
+        Key([], "e", lazy.spawn("dm-confedit -r"), desc='Choose a config file to edit'),
+        Key([], "i", lazy.spawn("dm-maim -r"), desc='Take a screenshot'),
+        Key([], "k", lazy.spawn("dm-kill -r"), desc='Kill processes '),
+        Key([], "m", lazy.spawn("dm-man -r"), desc='View manpages'),
+        Key([], "n", lazy.spawn("dm-note -r"), desc='Store and copy notes'),
+        Key([], "o", lazy.spawn("dm-bookman -r"), desc='Browser bookmarks'),
+        Key([], "p", lazy.spawn("rofi-pass"), desc='Password menu'),
+        Key([], "q", lazy.spawn("dm-logout -r"), desc='Logout menu'),
+        Key([], "r", lazy.spawn("dm-radio -r"), desc='Listen to online radio'),
+        Key([], "s", lazy.spawn("dm-websearch -r"), desc='Search various engines'),
+        Key([], "t", lazy.spawn("dm-translate -r"), desc='Translate text'),
+        Key([], "u", lazy.spawn("dm-music -r"), desc='Toggle music mpc/mpd')
+    ]),
+
     # Switch between windows
     Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
     Key([mod], "l", lazy.layout.right(), desc="Move focus to right"),
@@ -47,6 +93,7 @@ keys = [
     Key([mod, "shift"], "l", lazy.layout.shuffle_right(), desc="Move window to the right"),
     Key([mod, "shift"], "j", lazy.layout.shuffle_down(), desc="Move window down"),
     Key([mod, "shift"], "k", lazy.layout.shuffle_up(), desc="Move window up"),
+
     # Grow windows. If current window is on the edge of screen and direction
     # will be to screen edge - window would shrink.
     Key([mod, "control"], "h", lazy.layout.grow_left(), desc="Grow window to the left"),
@@ -54,6 +101,7 @@ keys = [
     Key([mod, "control"], "j", lazy.layout.grow_down(), desc="Grow window down"),
     Key([mod, "control"], "k", lazy.layout.grow_up(), desc="Grow window up"),
     Key([mod], "n", lazy.layout.normalize(), desc="Reset all window sizes"),
+
     # Toggle between split and unsplit sides of stack.
     # Split = all windows displayed
     # Unsplit = 1 window displayed, like Max layout, but still with
@@ -64,7 +112,6 @@ keys = [
         lazy.layout.toggle_split(),
         desc="Toggle between split and unsplit sides of stack",
     ),
-    Key([mod], "Return", lazy.spawn(terminal), desc="Launch terminal"),
     # Toggle between different layouts as defined below
     Key([mod], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
     Key([mod], "w", lazy.window.kill(), desc="Kill focused window"),
@@ -78,20 +125,8 @@ keys = [
     Key([mod, "control"], "r", lazy.reload_config(), desc="Reload the config"),
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
     Key([mod], "r", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
-]
 
-# Add key bindings to switch VTs in Wayland.
-# We can't check qtile.core.name in default config as it is loaded before qtile is started
-# We therefore defer the check until the key binding is run by using .when(func=...)
-for vt in range(1, 8):
-    keys.append(
-        Key(
-            ["control", "mod1"],
-            f"f{vt}",
-            lazy.core.change_vt(vt).when(func=lambda: qtile.core.name == "wayland"),
-            desc=f"Switch to VT{vt}",
-        )
-    )
+]
 
 groups = [Group(i) for i in "123456789"]
 
@@ -119,6 +154,8 @@ for i in groups:
         ]
     )
 
+colors = colors.DoomOne
+
 layouts = [
     layout.Columns(border_focus_stack=["#d75f5f", "#8f3d3d"], border_width=4),
     layout.Max(),
@@ -136,11 +173,13 @@ layouts = [
 ]
 
 widget_defaults = dict(
-    font="sans",
-    fontsize=12,
+    font="Ubuntu Bold",
+    fontsize=16,
     padding=3,
 )
 extension_defaults = widget_defaults.copy()
+
+logo = os.path.join(os.path.dirname(libqtile.resources.__file__), "logo.png")
 
 screens = [
     Screen(
