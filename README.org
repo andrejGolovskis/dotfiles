@@ -101,6 +101,7 @@ sudo apt install -y build-essential \
 #+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
 
 sudo apt install -y btop \
+                    alsa-utils \
                     fastfetch
 
 #+end_src

@@ -32,7 +32,7 @@ from libqtile.config import Click, Drag, Group, Key, KeyChord, Match, Screen
 from libqtile.lazy import lazy
 
 mod = "mod4"              # Sets mod key to SUPER/WINDOWS
-myTerm = "xterm"      
+myTerm = "alacritty"      
 myBrowser = "flatpak run app.zen_browser.zen"
 myEmacs = "emacsclient -c -a 'emacs' " # The space at the end is IMPORTANT!
 
@@ -57,36 +57,16 @@ keys = [
                       lazy.spawn("/usr/bin/emacs --daemon"),
                       desc='Kill/restart the Emacs daemon')
     ]),
-
+    
     # Rofi as default launcher    
-    Key([mod, "shift"], "Return", lazy.spawn("rofi -show drun -show-icons"), desc='Run Launcher'),
-
-    # Rofi scripts launched using the key chord SUPER+p followed by 'key'
-    KeyChord([mod], "p", [
-        Key([], "h", lazy.spawn("dm-hub -r"), desc='List all dmscripts'),
-        Key([], "a", lazy.spawn("dm-sounds -r"), desc='Choose ambient sound'),
-        Key([], "b", lazy.spawn("dm-setbg -r"), desc='Set background'),
-        Key([], "c", lazy.spawn("dtos-colorscheme -r"), desc='Choose color scheme'),
-        Key([], "e", lazy.spawn("dm-confedit -r"), desc='Choose a config file to edit'),
-        Key([], "i", lazy.spawn("dm-maim -r"), desc='Take a screenshot'),
-        Key([], "k", lazy.spawn("dm-kill -r"), desc='Kill processes '),
-        Key([], "m", lazy.spawn("dm-man -r"), desc='View manpages'),
-        Key([], "n", lazy.spawn("dm-note -r"), desc='Store and copy notes'),
-        Key([], "o", lazy.spawn("dm-bookman -r"), desc='Browser bookmarks'),
-        Key([], "p", lazy.spawn("rofi-pass"), desc='Password menu'),
-        Key([], "q", lazy.spawn("dm-logout -r"), desc='Logout menu'),
-        Key([], "r", lazy.spawn("dm-radio -r"), desc='Listen to online radio'),
-        Key([], "s", lazy.spawn("dm-websearch -r"), desc='Search various engines'),
-        Key([], "t", lazy.spawn("dm-translate -r"), desc='Translate text'),
-        Key([], "u", lazy.spawn("dm-music -r"), desc='Toggle music mpc/mpd')
-    ]),
+    Key([mod], "space", lazy.spawn("rofi -show run -show-icons"), desc='Run Launcher'),
 
     # Switch between windows
     Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
     Key([mod], "l", lazy.layout.right(), desc="Move focus to right"),
     Key([mod], "j", lazy.layout.down(), desc="Move focus down"),
     Key([mod], "k", lazy.layout.up(), desc="Move focus up"),
-    Key([mod], "space", lazy.layout.next(), desc="Move window focus to other window"),
+    #Key([mod], "space", lazy.layout.next(), desc="Move window focus to other window"),
     # Move windows between left/right columns or move up/down in current stack.
     # Moving out of range in Columns layout will create new column.
     Key([mod, "shift"], "h", lazy.layout.shuffle_left(), desc="Move window to the left"),
@@ -154,22 +134,48 @@ for i in groups:
         ]
     )
 
-colors = colors.DoomOne
+colors = colors.Nord
+
+layout_theme = {"border_width": 1,
+                "margin": 12,
+                "border_focus": colors[8],
+                "border_normal": colors[0]
+                }
 
 layouts = [
-    layout.Columns(border_focus_stack=["#d75f5f", "#8f3d3d"], border_width=4),
-    layout.Max(),
-    # Try more layouts by unleashing below layouts.
-    # layout.Stack(num_stacks=2),
-    # layout.Bsp(),
-    # layout.Matrix(),
-    # layout.MonadTall(),
-    # layout.MonadWide(),
-    # layout.RatioTile(),
-    # layout.Tile(),
-    # layout.TreeTab(),
-    # layout.VerticalTile(),
-    # layout.Zoomy(),
+    layout.MonadTall(**layout_theme),
+    layout.MonadWide(**layout_theme),
+    layout.Tile(**layout_theme),
+    layout.Max(**layout_theme),
+    #layout.Bsp(**layout_theme),
+    #layout.Floating(**layout_theme)
+    #layout.RatioTile(**layout_theme),
+    #layout.VerticalTile(**layout_theme),
+    #layout.Matrix(**layout_theme),
+    #layout.Stack(**layout_theme, num_stacks=2),
+    #layout.Columns(**layout_theme),
+    #layout.TreeTab(
+    #     font = "Ubuntu Bold",
+    #     fontsize = 11,
+    #     border_width = 0,
+    #     bg_color = colors[0],
+    #     active_bg = colors[8],
+    #     active_fg = colors[2],
+    #     inactive_bg = colors[1],
+    #     inactive_fg = colors[0],
+    #     padding_left = 8,
+    #     padding_x = 8,
+    #     padding_y = 6,
+    #     sections = ["ONE", "TWO", "THREE"],
+    #     section_fontsize = 10,
+    #     section_fg = colors[7],
+    #     section_top = 15,
+    #     section_bottom = 15,
+    #     level_shift = 8,
+    #     vspace = 3,
+    #     panel_width = 240
+    #     ),
+    #layout.Zoomy(**layout_theme),
 ]
 
 widget_defaults = dict(
@@ -184,7 +190,7 @@ logo = os.path.join(os.path.dirname(libqtile.resources.__file__), "logo.png")
 # Default settings
 widget_defaults = dict(
     font="Ubuntu Bold",
-    fontsize = 12,
+    fontsize = 22,
     padding = 0,
     background=colors[0]
 )
@@ -195,17 +201,19 @@ def init_widgets_list():
     widgets_list = [
         widget.Spacer(length = 8),
         widget.Image(
-                 filename = "~/.config/qtile/icons/cachyos.svg",
+                 filename = "~/.config/qtile/icons/debian.svg",
                  scale = "False",
-                 mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn("qtilekeys-yad")},
+                 margin_y = 5,
+                 margin_x = 5,
+                 mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn("rofi -show drun -show-icons")},
                  ),
         widget.Prompt(
                  font = "Ubuntu Mono",
-                 fontsize=14,
+                 fontsize=20,
                  foreground = colors[1]
         ),
         widget.GroupBox(
-                 fontsize = 8,
+                 fontsize = 20,
                  margin_y = 5,
                  margin_x = 10,
                  padding_y = 0,
@@ -226,24 +234,7 @@ def init_widgets_list():
                  font = "Ubuntu Mono",
                  foreground = colors[9],
                  padding = 2,
-                 fontsize = 14
-                 ),
-        widget.LaunchBar(
-                 progs = [("🦁", "brave", "Brave web browser"),
-                          ("🚀", "alacritty", "Alacritty terminal"),
-                          ("📁", "pcmanfm", "PCManFM file manager"),
-                          ("🎸", "vlc", "VLC media player")
-                         ], 
-                 fontsize = 12,
-                 padding = 5,
-                 foreground = colors[3],
-        ),
-        widget.TextBox(
-                 text = '|',
-                 font = "Ubuntu Mono",
-                 foreground = colors[9],
-                 padding = 2,
-                 fontsize = 14
+                 fontsize = 20
                  ),
         widget.CurrentLayout(
                  foreground = colors[1],
@@ -254,7 +245,7 @@ def init_widgets_list():
                  font = "Ubuntu Mono",
                  foreground = colors[9],
                  padding = 2,
-                 fontsize = 14
+                 fontsize = 20
                  ),
         widget.WindowName(
                  foreground = colors[6],
@@ -271,13 +262,13 @@ def init_widgets_list():
         widget.CPU(
                  foreground = colors[4],
                  padding = 8, 
-                 mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn(myTerm + ' -e htop')},
+                 mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn(myTerm + ' -e btop')},
                  format = 'Cpu: {load_percent}%',
                  ),
         widget.Memory(
                  foreground = colors[8],
                  padding = 8, 
-                 mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn(myTerm + ' -e htop')},
+                 mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn(myTerm + ' -e btop')},
                  format = '{MemUsed: .0f}{mm}',
                  fmt = 'Mem: {}',
                  ),
@@ -296,15 +287,16 @@ def init_widgets_list():
                  foreground = colors[7],
                  padding = 8, 
                  fmt = 'Vol: {}',
+                 emoji = True
                  ),
         widget.Clock(
                  foreground = colors[8],
                  padding = 8, 
                  mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn('notify-date')},
                  ## Uncomment for date and time 
-                 # format = "%a, %b %d - %H:%M",
+                 format = "%a, %b %d - %H:%M",
                  ## Uncomment for time only
-                 format = "%I:%M %p",
+                 #format = "%I:%M %p",
                  ),
     ]
 
@@ -316,12 +308,14 @@ def init_widgets_list():
     return widgets_list
 
 screens = [
-    Screen(top=bar.Bar(widgets=init_widgets_list(), margin=[8, 12, 0, 12], size=30)
+    Screen(top=bar.Bar(widgets=init_widgets_list(), margin=[8, 12, 0, 12], size=40),
+           wallpaper='~/Pictures/japan-black-and-white.jpg',
+           wallpaper_mode='fill'
         # You can uncomment this variable if you see that on X11 floating resize/moving is laggy
         # By default we handle these events delayed to already improve performance, however your system might still be struggling
         # This variable is set to None (no cap) by default, but you can set it to 60 to indicate that you limit it to 60 events per second
         # x11_drag_polling_rate = 60,
-    ),
+    )
 ]
 
 # Drag floating layouts.

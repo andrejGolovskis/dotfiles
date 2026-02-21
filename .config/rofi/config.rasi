@@ -1,0 +1,8 @@
+/*Dracula theme based on the Purple official rofi theme*/
+
+configuration {
+ modi: "window,drun,ssh,combi,waypass";
+ font: "hack 10";
+ combi-modi: "window,drun,ssh";
+ }
+@theme "~/.config/rofi/themes/dtos-center.rasi"
