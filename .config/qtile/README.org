@@ -102,7 +102,7 @@ keys = [
     ]),
     
     # Rofi as default launcher    
-    Key([mod], "space", lazy.spawn("rofi -show run -show-icons"), desc='Run Launcher'),
+    Key([mod], "space", lazy.spawn("rofi -show drun -show-icons"), desc='Run Launcher'),
 
     # Switch between windows
     Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
