@@ -4,7 +4,6 @@
 
 My dotfiles and a new machine setup scripts, using literate programming in org.
 
-reboot
 * Table of Contents :toc:
 - [[#system][System]]
   - [[#init][Init]]
@@ -13,7 +12,6 @@ reboot
   - [[#programs][Programs]]
   - [[#shell][Shell]]
   - [[#jetbrains][Jetbrains]]
-  - [[#browser][Browser]]
 - [[#emacs][Emacs]]
   - [[#init-1][Init]]
   - [[#packages][Packages]]
@@ -110,7 +108,7 @@ doom doctor
 #+begin_src shell :results output silent :cache no :tangle scripts/init.sh :mkdirp yes :dir /sudo::
 rm -rf ~/.doom.d
 rm -rf ~/.qtile/config.py
-stow .
+stow . 
 
 doom sync
 
@@ -127,7 +125,7 @@ stow .
 
 sudo apt install -y build-essential \
                     cmake \
-                    libtool
+                    libtool \
                     libvterm-dev
 
 #+end_src
@@ -135,7 +133,7 @@ sudo apt install -y build-essential \
 #+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
 
 sudo apt install -y btop \
-                    alsa-utils \
+                    #alsa-utils \
                     fastfetch
 
 #+end_src
@@ -153,7 +151,7 @@ sudo apt install -y python3-pip python3-venv
 sudo apt install flatpak
 
 # For KDE
-sudo apt install plasma-discover-backend-flatpak
+#sudo apt install plasma-discover-backend-flatpak
 
 # Flatpak repo
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
@@ -257,7 +255,19 @@ sudo apt-get install -y veracrypt
 - Download from: https://www.pcloud.com/how-to-install-pcloud-drive-linux.html?download=electron-64
 - Start ./pcloud
 *** Creality Studio
-- Download from https://github.com/CrealityOfficial/CrealityPrint/releases latest 
+- Download from https://github.com/CrealityOfficial/CrealityPrint/releases latest
+*** Zen
+
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+sudo apt -y remove firefox-esr
+sudo apt -y purge firefox-esr
+
+sudo apt autoremove
+
+flatpak install -y flathub app.zen_browser.zen
+
+#+end_src
 ** Shell
 
 #+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
@@ -283,28 +293,12 @@ tar -xzf /tmp/jetbrains-toolbox.tar.gz -C /opt
 # Find extracted folder (e.g. /opt/jetbrains-toolbox-3.0.1.59888)
 DIR="$(ls -d /opt/jetbrains-toolbox-* | sort -V | tail -n 1)"
 
-# Run JetBrains Toolbox
-"$DIR/bin/jetbrains-toolbox" &
-
 # Cleanup archive
 rm -f /tmp/jetbrains-toolbox.tar.gz
 
 echo "JetBrains Toolbox installed in $DIR"
 #+end_src
-
-** Browser
-*** Zen
-
-#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
-
-sudo apt -y remove firefox-esr
-sudo apt -y purge firefox-esr
-
-sudo apt autoremove
-
-flatpak install flathub app.zen_browser.zen
-
-#+end_src
+After install start inside DIR the jetbrains file
 * Emacs
 ** Init
 #+BEGIN_SRC emacs-lisp :tangle .doom.d/init.el :mkdirp yes
@@ -396,7 +390,7 @@ flatpak install flathub app.zen_browser.zen
 
        :tools
        ansible
-       ;;debugger          ; FIXME stepping through code, to help you add bugs
+       debugger          ; FIXME stepping through code, to help you add bugs
        ;;direnv
        docker
        ;;editorconfig      ; let someone else argue about tabs vs spaces
@@ -561,8 +555,7 @@ flatpak install flathub app.zen_browser.zen
 
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
-;; clients, file templates and snippets.
-
+;; clients, file templates and snippets.s
 
 (setq user-full-name "Andrej Golovskis"
       user-mail-address "andrej@golovskis.de")
@@ -633,12 +626,9 @@ flatpak install flathub app.zen_browser.zen
 + Always start in fullscreen mode -> should be in qtile
 + Add ssh key
 + Add keyboard support for languages
-+ Install alacratty
 + Add lockscreen
-+ Add qtile
 + Add keepass settings support
 + mu4e support
-+ magit
 + add support for shortcuts
 + Browser -> sane configs 
 + Libreoffice
@@ -646,7 +636,6 @@ flatpak install flathub app.zen_browser.zen
 + Create manual ? / cheatsheets
 + Screen capture
 + Switch wallpapers 
-+ Fix freezing at beginning
 + devtoys
 + Reconfigure doom emacs
 + -> start in a server

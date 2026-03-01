@@ -40,7 +40,7 @@ doom doctor
 
 rm -rf ~/.doom.d
 rm -rf ~/.qtile/config.py
-stow .
+stow . 
 
 doom sync
 
