@@ -4,6 +4,7 @@
 
 My dotfiles and a new machine setup scripts, using literate programming in org.
 
+reboot
 * Table of Contents :toc:
 - [[#system][System]]
   - [[#init][Init]]
@@ -24,10 +25,22 @@ Installation of core system packages
 
 - Use ~:tangle~ to remove from adding into a file
 - Use no ~:dir /sudo::~ to ask for sudo password
+  reboot
 - Use ~:results~ output silent to print to new buffer
 
 ** Init
 Initializing everything that is needed to start emacs 
+*** Precondition
+Install git and sudo for further steps.
+#+begin_src shell :results output silent :cache no /sudo::
+su -
+apt -y install git
+apt -y install sudo
+adduser [USER] sudo
+logout
+
+#+end_src
+  
 *** Upgrade
 Run first update and upgrade of a system
 
@@ -35,6 +48,23 @@ Run first update and upgrade of a system
 
 sudo apt -y update
 sudo apt -y upgrade
+
+#+end_src
+*** Gnome
+#+begin_src shell :results output silent :cache no :tangle scripts/init.sh :mkdirp yes :dir /sudo::
+
+sudo apt -y install gnome-core
+sudo apt purge -y \
+  gnome-contacts \
+  gnome-maps \
+  gnome-weather \
+  gnome-clocks \
+  gnome-characters \
+  gnome-connections \
+  yelp
+
+sudo apt purge firefox-esr
+sudo apt autoremove
 
 #+end_src
 
@@ -47,6 +77,10 @@ sudo apt -y install curl
 sudo apt -y install wget
 sudo apt -y install libfuse2
 sudo apt -y install stow
+
+# FONTS
+sudo apt install fonts-firacode
+sudo apt install fonts-jetbrains-mono
 
 #+end_src
 
@@ -103,6 +137,13 @@ sudo apt install -y build-essential \
 sudo apt install -y btop \
                     alsa-utils \
                     fastfetch
+
+#+end_src
+
+*** Python
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+sudo apt install -y python3-pip python3-venv
 
 #+end_src
 
@@ -170,7 +211,8 @@ sudo apt install -y ansible
 *** Qtile
 #+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
 
-sudo apt install -y qtile python3-psutil
+sudo apt install -y qtile python3-psutil \
+                          python3-pulsectl
 
 #+end_src
 *** Alacrity

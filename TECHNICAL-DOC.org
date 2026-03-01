@@ -15,3 +15,9 @@ SPC o p Space
 SPC TAB TAB - Workspace bar
 
 #+end_src
+
+
+* Gnome shortcuts
+- Switch workspace: Ctrl + 1-9
+- Move workspace: Ctrl + Shift + 1-9
+- Open menu: 

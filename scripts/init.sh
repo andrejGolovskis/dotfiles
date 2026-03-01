@@ -1,11 +1,28 @@
 sudo apt -y update
 sudo apt -y upgrade
 
+sudo apt -y install gnome-core
+sudo apt purge -y \
+  gnome-contacts \
+  gnome-maps \
+  gnome-weather \
+  gnome-clocks \
+  gnome-characters \
+  gnome-connections \
+  yelp
+
+sudo apt purge firefox-esr
+sudo apt autoremove
+
 sudo apt -y install git
 sudo apt -y install curl
 sudo apt -y install wget
 sudo apt -y install libfuse2
 sudo apt -y install stow
+
+# FONTS
+sudo apt install fonts-firacode
+sudo apt install fonts-jetbrains-mono
 
 sudo apt remove -y --autoremove emacs emacs-common
 
