@@ -12,6 +12,11 @@ My dotfiles and a new machine setup scripts, using literate programming in org.
   - [[#programs][Programs]]
   - [[#shell][Shell]]
   - [[#jetbrains][Jetbrains]]
+- [[#gnome][Gnome]]
+  - [[#general][General]]
+  - [[#keybindings][Keybindings]]
+  - [[#workspace][Workspace]]
+  - [[#extensions][Extensions]]
 - [[#emacs][Emacs]]
   - [[#init-1][Init]]
   - [[#packages][Packages]]
@@ -63,6 +68,8 @@ sudo apt purge -y \
 
 sudo apt purge firefox-esr
 sudo apt autoremove
+
+sudo apt install -y gnome-shell-extension-manager
 
 #+end_src
 
@@ -299,6 +306,100 @@ rm -f /tmp/jetbrains-toolbox.tar.gz
 echo "JetBrains Toolbox installed in $DIR"
 #+end_src
 After install start inside DIR the jetbrains file
+
+* Gnome
+** General
+#+begin_src shell :results output silent :cache no :tangle no
+
+# SET key to use AltGr for german
+gsettings set org.gnome.desktop.interface enable-hot-corners false
+gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+altgr-intl')]"
+gsettings set org.gnome.desktop.input-sources mru-sources "[('xkb', 'us+altgr-intl')]"
+gsettings set org.gnome.desktop.input-sources xkb-options "['ctrl:nocaps']"
+
+
+# Set input sources: US (AltGr intl) + Russian (standard)
+gsettings set org.gnome.desktop.input-sources sources \
+"[('xkb', 'us+altgr-intl'), ('xkb', 'ru')]"
+
+# Ensure MRU matches exactly (prevents ghost layouts)
+gsettings set org.gnome.desktop.input-sources mru-sources \
+"[('xkb', 'us+altgr-intl'), ('xkb', 'ru')]"
+
+
+# Time format
+gsettings set org.gnome.desktop.interface clock-format '24h'
+gsettings set org.gnome.desktop.interface clock-show-weekday true
+gsettings set org.gnome.system.locale region 'de_DE.UTF-8'
+gsettings set org.gnome.desktop.calendar show-weekdate true
+
+
+#+end_src
+
+** Keybindings
+
+#+begin_src shell :results output silent :cache no :tangle no
+
+# Caps Lock becomes Control
+gsettings set org.gnome.desktop.input-sources xkb-options "['ctrl:nocaps']"
+
+# (Optional) Ensure Alt+Shift switches layouts
+gsettings set org.gnome.desktop.wm.keybindings switch-input-source "['<Control>space']"
+
+# Register custom keybinding paths
+gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings \
+"['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', \
+'/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/', \
+'/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/']"
+
+# --- Super+B -> Default Browser ---
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name 'Browser'
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command 'xdg-open https://'
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding '<Super>b'
+
+# --- Super+Return -> Terminal  ---
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ name 'Terminal'
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ command "emacsclient -c -a emacs -e '(eshell)' "
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ binding '<Super><Shift>Return'
+
+# --- Super+E -> Emacs (WITH TRAILING SPACE) ---
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ name 'Emacs'
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ command 'emacsclient -c -a emacs '
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ binding '<Super>e'
+
+# --- Super+L -> Lock screen ---
+gsettings set org.gnome.settings-daemon.plugins.media-keys screensaver "['<Super>l']"
+
+# --- Super+W -> Close window ---
+gsettings set org.gnome.desktop.wm.keybindings close "['<Super>w']"
+
+#+end_src
+
+** Workspace
+#+begin_src shell :results output silent :cache no :tangle no
+
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-1 "['<Control>1']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-2 "['<Control>2']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-3 "['<Control>3']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-4 "['<Control>4']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-5 "['<Control>5']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-6 "['<Control>6']"
+
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-1 "['<Shift><Control>1']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-2 "['<Shift><Control>2']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-3 "['<Shift><Control>3']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-4 "['<Shift><Control>4']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-5 "['<Shift><Control>5']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-6 "['<Shift><Control>6']"
+
+#+end_src
+
+** Extensions
+- Forge
+- Space bar
+  - Only for numbers 
+- Just perfection
+  - Animation: Almost none
 * Emacs
 ** Init
 #+BEGIN_SRC emacs-lisp :tangle .doom.d/init.el :mkdirp yes
@@ -636,6 +737,7 @@ After install start inside DIR the jetbrains file
 + Create manual ? / cheatsheets
 + Screen capture
 + Switch wallpapers 
++ Keepass
 + devtoys
 + Reconfigure doom emacs
 + -> start in a server

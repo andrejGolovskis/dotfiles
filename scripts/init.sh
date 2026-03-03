@@ -14,6 +14,8 @@ sudo apt purge -y \
 sudo apt purge firefox-esr
 sudo apt autoremove
 
+sudo apt install -y gnome-shell-extension-manager
+
 sudo apt -y install git
 sudo apt -y install curl
 sudo apt -y install wget
