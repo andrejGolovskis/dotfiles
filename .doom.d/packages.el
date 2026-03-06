@@ -53,3 +53,4 @@
 (package! pdf-tools)
 (package! nerd-icons)
 (package! xterm-color)
+(package! dired-du)

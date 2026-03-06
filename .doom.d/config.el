@@ -23,7 +23,7 @@
 ;; font string. You generally only need these two:
 
 (setq doom-font (font-spec :family "Fira Code" :size 36))
-(setq doom-theme 'doom-vibrant)
+(setq doom-theme 'doom-horizon)
 
 (setq display-line-numbers-type t)
 (display-time-mode 1)
@@ -35,18 +35,10 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-;; (setq org-directory "~/Shared/pcloud/bestiary/")
-;; (setq org-directory "P:/_en1/journal/")
-;; (setq org-directory "~/Shared/pcloud/_en1/journal/")
-;; (setq org-roam-directory "P:/_en1/bestiary/")
-;; (setq org-directory "~/Shared/pcloud/_en1/journal/")
-
-;; This determines the style of line numbers in effect. If set to `nil', line
-;; numbers are disabled. For relative line numbers, set this to `relative'.
 
 
-(setq org-directory "~/org/")
-(setq denote-directory "~/_9ILLI,uK")
+(setq org-directory "~/Data/20_kontur")
+(setq denote-directory "~/Data/20_kontur")
 
 ;; Auto tangle
 (use-package org-auto-tangle
@@ -70,3 +62,7 @@
 (map! :leader
       :desc "Toggle Eshell popup"
       "o t" #'+eshell/toggle)
+
+;; Human readable dired size 
+(setq dired-listing-switches "-alh")
+(setq dired-human-readable t)
