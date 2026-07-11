@@ -7,6 +7,7 @@
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.s
 
+
 (setq user-full-name "Andrej Golovskis"
       user-mail-address "andrej@golovskis.de")
 
@@ -22,8 +23,11 @@
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
 
+(require 'acp)
+(require 'agent-shell)
+
 (setq doom-font (font-spec :family "Fira Code" :size 36))
-(setq doom-theme 'doom-horizon)
+(setq doom-theme 'doom-sourcerer)
 
 (setq display-line-numbers-type t)
 (display-time-mode 1)
@@ -37,8 +41,8 @@
 ;; change `org-directory'. It must be set before org loads!
 
 
-(setq org-directory "~/Data/20_kontur")
-(setq denote-directory "~/Data/20_kontur")
+(setq org-directory "~/Data/base/20_notes/21_kontur")
+(setq denote-directory "~/Data/base/20_notes/21_kontur")
 
 ;; Auto tangle
 (use-package org-auto-tangle
@@ -47,6 +51,9 @@
   :config
   (setq org-auto-tangle-default t))
 
+(after! org
+  (require 'org-xopp)
+  (org-xopp-setup))
 
 ;; Pdf tools config
 (use-package pdf-tools
@@ -66,3 +73,26 @@
 ;; Human readable dired size 
 (setq dired-listing-switches "-alh")
 (setq dired-human-readable t)
+
+
+;; Agent shell 
+;; Make OpenCode visible to Emacs, Eshell and subprocesses.
+(let ((opencode-dir (expand-file-name "~/.opencode/bin")))
+  (add-to-list 'exec-path opencode-dir)
+  (setenv "PATH"
+          (concat opencode-dir path-separator (getenv "PATH"))))
+
+  ;; Let OpenCode inherit HOME, PATH and the rest of Emacs's environment.
+ ;; (setq agent-shell-opencode-environment
+   ;;     (agent-shell-make-environment-variables :inherit-env t)))
+
+(after! agent-shell
+  (setq agent-shell-header-style 'text
+        agent-shell-show-welcome-message t))
+
+(use-package! gptel
+  :config
+  (setq gptel-openai-oauth-login-method 'device
+        gptel-backend
+        (gptel-make-openai-oauth "ChatGPT Subscription")
+        gptel-model 'gpt-5.4-mini))

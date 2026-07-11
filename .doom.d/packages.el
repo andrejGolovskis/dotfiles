@@ -54,3 +54,10 @@
 (package! nerd-icons)
 (package! xterm-color)
 (package! dired-du)
+(package! agent-shell)
+(package! shell-maker)
+(package! acp)
+
+(package! org-xopp
+  :recipe (:host github :repo "mahmoodsh36/org-xopp"
+           :files ("*.el" "*.sh")))

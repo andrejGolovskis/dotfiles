@@ -438,7 +438,7 @@ gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-6 "['<Shift><Co
 
        :completion
        company           ; the ultimate code completion backend
-       helm              ; the *other* search engine for love and life
+       ;helm              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
        ivy               ; a search engine for love and life
 
@@ -456,7 +456,7 @@ gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-6 "['<Shift><Co
        neotree           ; a project drawer, like NERDTree for vim
        ophints           ; highlight the region an operation acts on
        (popup +defaults)   ; tame sudden yet inevitable temporary windows
-       pretty-code       ; ligatures or substitute text with pretty symbols
+       ligatures         ; ligatures or substitute text with pretty symbols
        tabs              ; an tab bar for Emacs
        treemacs          ; a project drawer, like neotree but cooler
        unicode           ; extended unicode support for various languages
@@ -519,6 +519,7 @@ gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-6 "['<Shift><Co
        ;;terraform         ; infrastructure as code
        ;;tmux              ; an API for interacting with tmux
        ;;upload            ; map local to remote projects via ssh/ftp
+       llm
 
        :lang
        ;;agda              ; types of types of types of types...
@@ -595,6 +596,9 @@ gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-6 "['<Shift><Co
        (default +bindings +smartparens))
 
 #+END_SRC
+
+#+RESULTS:
+
 ** Packages
 #+BEGIN_SRC emacs-lisp :tangle .doom.d/packages.el :mkdirp yes
 
@@ -654,6 +658,13 @@ gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-6 "['<Shift><Co
 (package! nerd-icons)
 (package! xterm-color)
 (package! dired-du)
+(package! agent-shell)
+(package! shell-maker)
+(package! acp)
+
+(package! org-xopp
+  :recipe (:host github :repo "mahmoodsh36/org-xopp"
+           :files ("*.el" "*.sh")))
 
 #+END_SRC
 
@@ -667,6 +678,7 @@ gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-6 "['<Shift><Co
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.s
+
 
 (setq user-full-name "Andrej Golovskis"
       user-mail-address "andrej@golovskis.de")
@@ -683,8 +695,11 @@ gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-6 "['<Shift><Co
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
 
+(require 'acp)
+(require 'agent-shell)
+
 (setq doom-font (font-spec :family "Fira Code" :size 36))
-(setq doom-theme 'doom-horizon)
+(setq doom-theme 'doom-sourcerer)
 
 (setq display-line-numbers-type t)
 (display-time-mode 1)
@@ -698,8 +713,8 @@ gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-6 "['<Shift><Co
 ;; change `org-directory'. It must be set before org loads!
 
 
-(setq org-directory "~/Data/20_kontur")
-(setq denote-directory "~/Data/20_kontur")
+(setq org-directory "~/Data/base/20_notes/21_kontur")
+(setq denote-directory "~/Data/base/20_notes/21_kontur")
 
 ;; Auto tangle
 (use-package org-auto-tangle
@@ -708,6 +723,9 @@ gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-6 "['<Shift><Co
   :config
   (setq org-auto-tangle-default t))
 
+(after! org
+  (require 'org-xopp)
+  (org-xopp-setup))
 
 ;; Pdf tools config
 (use-package pdf-tools
@@ -727,6 +745,29 @@ gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-6 "['<Shift><Co
 ;; Human readable dired size 
 (setq dired-listing-switches "-alh")
 (setq dired-human-readable t)
+
+
+;; Agent shell 
+;; Make OpenCode visible to Emacs, Eshell and subprocesses.
+(let ((opencode-dir (expand-file-name "~/.opencode/bin")))
+  (add-to-list 'exec-path opencode-dir)
+  (setenv "PATH"
+          (concat opencode-dir path-separator (getenv "PATH"))))
+
+  ;; Let OpenCode inherit HOME, PATH and the rest of Emacs's environment.
+ ;; (setq agent-shell-opencode-environment
+   ;;     (agent-shell-make-environment-variables :inherit-env t)))
+
+(after! agent-shell
+  (setq agent-shell-header-style 'text
+        agent-shell-show-welcome-message t))
+
+(use-package! gptel
+  :config
+  (setq gptel-openai-oauth-login-method 'device
+        gptel-backend
+        (gptel-make-openai-oauth "ChatGPT Subscription")
+        gptel-model 'gpt-5.4-mini))
 
 #+END_SRC
 * Still missing
