@@ -124,7 +124,8 @@ doom sync
 ** Stow
 
 #+begin_src shell :results output silent :cache no :tangle scripts/init.sh :mkdirp yes :dir /sudo::
-stow .
+stow -D -v -t "$HOME" .
+stow -S -v --no-folding -t "$HOME" .
 #+end_src
 
 ** System
@@ -716,6 +717,11 @@ gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-6 "['<Shift><Co
 (setq org-directory "~/Data/base/20_notes/21_kontur")
 (setq denote-directory "~/Data/base/20_notes/21_kontur")
 
+;; Dired
+(after! dired
+  (setq dired-auto-revert-buffer nil))
+(setq directory-free-space-program nil)
+
 ;; Auto tangle
 (use-package org-auto-tangle
   :defer t
@@ -762,18 +768,18 @@ gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-6 "['<Shift><Co
   (setq agent-shell-header-style 'text
         agent-shell-show-welcome-message t))
 
+;; Gptel config
+
 (use-package! gptel
   :config
   (setq gptel-openai-oauth-login-method 'device
         gptel-backend
         (gptel-make-openai-oauth "ChatGPT Subscription")
-        gptel-model 'gpt-5.4-mini))
+        gptel-model 'gpt-5.5))
 
 #+END_SRC
 * Still missing
-+ Always start in fullscreen mode -> should be in qtile
 + Add ssh key
-+ Add keyboard support for languages
 + Add lockscreen
 + Add keepass settings support
 + mu4e support

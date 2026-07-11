@@ -46,4 +46,5 @@ stow .
 
 doom sync
 
-stow .
+stow -D -v -t "$HOME" .
+stow -S -v --no-folding -t "$HOME" .

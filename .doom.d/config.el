@@ -44,6 +44,11 @@
 (setq org-directory "~/Data/base/20_notes/21_kontur")
 (setq denote-directory "~/Data/base/20_notes/21_kontur")
 
+;; Dired
+(after! dired
+  (setq dired-auto-revert-buffer nil))
+(setq directory-free-space-program nil)
+
 ;; Auto tangle
 (use-package org-auto-tangle
   :defer t
@@ -90,9 +95,11 @@
   (setq agent-shell-header-style 'text
         agent-shell-show-welcome-message t))
 
+;; Gptel config
+
 (use-package! gptel
   :config
   (setq gptel-openai-oauth-login-method 'device
         gptel-backend
         (gptel-make-openai-oauth "ChatGPT Subscription")
-        gptel-model 'gpt-5.4-mini))
+        gptel-model 'gpt-5.5))
