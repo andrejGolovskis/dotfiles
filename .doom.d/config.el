@@ -44,6 +44,8 @@
 (setq org-directory "~/Data/base/20_notes/21_kontur")
 (setq denote-directory "~/Data/base/20_notes/21_kontur")
 
+;(desktop-save-mode 1)
+
 ;; Dired
 (after! dired
   (setq dired-auto-revert-buffer nil))
@@ -80,12 +82,62 @@
 (setq dired-human-readable t)
 
 
+;; Katalog
+;; Katalog path for eshell
+(push (expand-file-name "~/.local/bin") exec-path)
+(setenv "PATH" (concat (expand-file-name "~/.local/bin") ":" (getenv "PATH")))
+
+
+;; Katalog - document management
+(defvar katalog-inbox "~/Data/base/00_inbox/docs/")
+(defvar katalog-catalog "~/Data/base/30_docs/")
+
+(defun katalog-import ()
+  (interactive)
+  (compile (format "%s %s" (expand-file-name "~/.local/bin/katalog") katalog-inbox)))
+
+(defun katalog-inbox ()
+  (interactive)
+  (dired katalog-inbox))
+
+(defun katalog-catalog ()
+  (interactive)
+  (dired katalog-catalog))
+
+(defun katalog-search ()
+  (interactive)
+  (consult-recoll nil))
+
+(defun katalog-copy-to-inbox ()
+  (interactive)
+  (let ((files (dired-get-marked-files nil nil nil t))
+        (dest (expand-file-name katalog-inbox)))
+    (dolist (file files)
+      (copy-file file dest t))
+    (message "Copied %d file(s) to %s" (length files) dest)))
+
+(map! :leader
+      (:prefix ("k" . "katalog")
+       :desc "Import documents" "i" #'katalog-import
+       :desc "Open inbox" "I" #'katalog-inbox
+       :desc "Open catalog" "k" #'katalog-catalog
+       :desc "Search documents" "s" #'katalog-search))
+
+(map! :after dired
+      :map dired-mode-map
+      :prefix ("k" . "katalog")
+      :desc "Copy to inbox" "i" #'katalog-copy-to-inbox)
+
+
+
 ;; Agent shell 
 ;; Make OpenCode visible to Emacs, Eshell and subprocesses.
 (let ((opencode-dir (expand-file-name "~/.opencode/bin")))
   (add-to-list 'exec-path opencode-dir)
   (setenv "PATH"
           (concat opencode-dir path-separator (getenv "PATH"))))
+
+
 
   ;; Let OpenCode inherit HOME, PATH and the rest of Emacs's environment.
  ;; (setq agent-shell-opencode-environment

@@ -10,6 +10,7 @@ My dotfiles and a new machine setup scripts, using literate programming in org.
   - [[#stow][Stow]]
   - [[#system-1][System]]
   - [[#programs][Programs]]
+  - [[#utility][Utility]]
   - [[#shell][Shell]]
   - [[#jetbrains][Jetbrains]]
   - [[#hardware][Hardware]]
@@ -233,7 +234,7 @@ sudo apt install -y alacritty
 
 sudo apt install -y rofi
 
-#+end_src
+#+
 ** Programs
 *** KeePassXC
 #+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
@@ -279,6 +280,15 @@ sudo apt -y purge firefox-esr
 sudo apt autoremove
 
 flatpak install -y flathub app.zen_browser.zen
+
+#+end_src
+** Utility
+*** Katalog
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+# Utils for katalog
+
+sudo apt install -y ocrmypdf tesseract-ocr tesseract-ocr-deu tesseract-ocr-eng poppler-utils recoll
 
 #+end_src
 ** Shell
@@ -653,6 +663,8 @@ gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-6 "['<Shift><Co
 (package! org-super-agenda)
 (package! org-fancy-priorities)
 (package! denote)
+(package! denote)
+(package! consult-recoll)
 (package! org-download)
 (package! org-auto-tangle)
 (package! pdf-tools)
@@ -717,6 +729,8 @@ gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-6 "['<Shift><Co
 (setq org-directory "~/Data/base/20_notes/21_kontur")
 (setq denote-directory "~/Data/base/20_notes/21_kontur")
 
+;(desktop-save-mode 1)
+
 ;; Dired
 (after! dired
   (setq dired-auto-revert-buffer nil))
@@ -753,12 +767,62 @@ gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-6 "['<Shift><Co
 (setq dired-human-readable t)
 
 
+;; Katalog
+;; Katalog path for eshell
+(push (expand-file-name "~/.local/bin") exec-path)
+(setenv "PATH" (concat (expand-file-name "~/.local/bin") ":" (getenv "PATH")))
+
+
+;; Katalog - document management
+(defvar katalog-inbox "~/Data/base/00_inbox/docs/")
+(defvar katalog-catalog "~/Data/base/30_docs/")
+
+(defun katalog-import ()
+  (interactive)
+  (compile (format "%s %s" (expand-file-name "~/.local/bin/katalog") katalog-inbox)))
+
+(defun katalog-inbox ()
+  (interactive)
+  (dired katalog-inbox))
+
+(defun katalog-catalog ()
+  (interactive)
+  (dired katalog-catalog))
+
+(defun katalog-search ()
+  (interactive)
+  (consult-recoll nil))
+
+(defun katalog-copy-to-inbox ()
+  (interactive)
+  (let ((files (dired-get-marked-files nil nil nil t))
+        (dest (expand-file-name katalog-inbox)))
+    (dolist (file files)
+      (copy-file file dest t))
+    (message "Copied %d file(s) to %s" (length files) dest)))
+
+(map! :leader
+      (:prefix ("k" . "katalog")
+       :desc "Import documents" "i" #'katalog-import
+       :desc "Open inbox" "I" #'katalog-inbox
+       :desc "Open catalog" "k" #'katalog-catalog
+       :desc "Search documents" "s" #'katalog-search))
+
+(map! :after dired
+      :map dired-mode-map
+      :prefix ("k" . "katalog")
+      :desc "Copy to inbox" "i" #'katalog-copy-to-inbox)
+
+
+
 ;; Agent shell 
 ;; Make OpenCode visible to Emacs, Eshell and subprocesses.
 (let ((opencode-dir (expand-file-name "~/.opencode/bin")))
   (add-to-list 'exec-path opencode-dir)
   (setenv "PATH"
           (concat opencode-dir path-separator (getenv "PATH"))))
+
+
 
   ;; Let OpenCode inherit HOME, PATH and the rest of Emacs's environment.
  ;; (setq agent-shell-opencode-environment

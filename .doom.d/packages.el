@@ -48,6 +48,8 @@
 (package! org-super-agenda)
 (package! org-fancy-priorities)
 (package! denote)
+(package! denote)
+(package! consult-recoll)
 (package! org-download)
 (package! org-auto-tangle)
 (package! pdf-tools)
