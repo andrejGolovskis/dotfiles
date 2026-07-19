@@ -11,7 +11,6 @@
 (setq user-full-name "Andrej Golovskis"
       user-mail-address "andrej@golovskis.de")
 
-
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
 ;;
@@ -87,7 +86,6 @@
 (push (expand-file-name "~/.local/bin") exec-path)
 (setenv "PATH" (concat (expand-file-name "~/.local/bin") ":" (getenv "PATH")))
 
-
 ;; Katalog - document management
 (defvar katalog-inbox "~/Data/base/00_inbox/docs/")
 (defvar katalog-catalog "~/Data/base/30_docs/")
@@ -104,29 +102,82 @@
   (interactive)
   (dired katalog-catalog))
 
-(defun katalog-search ()
-  (interactive)
-  (consult-recoll nil))
-
-(defun katalog-copy-to-inbox ()
+(defun katalog-move-to-inbox ()
   (interactive)
   (let ((files (dired-get-marked-files nil nil nil t))
         (dest (expand-file-name katalog-inbox)))
     (dolist (file files)
-      (copy-file file dest t))
-    (message "Copied %d file(s) to %s" (length files) dest)))
+      (rename-file file
+                   (expand-file-name (file-name-nondirectory file) dest)
+                   t))
+    (message "Moved %d file(s) to %s" (length files) dest)))
+
+(defun katalog-search ()
+  "Search catalog contents with Consult Recoll."
+  (interactive)
+  (let ((result
+         (catch 'katalog-recoll-export
+           (minibuffer-with-setup-hook
+               (lambda ()
+                 (local-set-key (kbd "C-c C-o") #'katalog-recoll-to-dired))
+             (consult-recoll nil)))))
+    (when (and (consp result) (eq (car result) 'dired))
+      (katalog-recoll-open-dired (cdr result)))))
+
+(use-package! consult-recoll
+  :commands consult-recoll
+  :config
+  (setq consult-recoll-inline-snippets t)
+  
+
+  ;; Filter results to PDFs only (use .txt sidecars for matching, not display)
+  (defun katalog-recoll-filter-pdf (orig-fn str)
+    "Skip non-PDF results from recollq."
+    (if (and (string-match consult-recoll--line-rx str)
+             (not (string= (match-string 1 str) "application/pdf")))
+        nil
+      (funcall orig-fn str)))
+  (advice-add 'consult-recoll--transformer :around #'katalog-recoll-filter-pdf)
+
+  (defun katalog-recoll-open-dired (files)
+    "Open FILES in Dired."
+    (let ((default-directory (expand-file-name katalog-catalog)))
+      (if files
+          (dired (cons default-directory files))
+        (message "No matching PDFs"))))
+
+  (defun katalog-recoll-to-dired ()
+    "Exit Consult and open all matching PDFs in Dired."
+    (interactive)
+    (let ((files
+           (delete-dups
+            (delq nil
+                  (mapcar (lambda (candidate)
+                            (let ((path (get-text-property 0 'url candidate)))
+                              (and path
+                                   (string-suffix-p ".pdf" path)
+                                   (file-exists-p path)
+                                   path)))
+                          (all-completions ""
+                                           minibuffer-completion-table
+                                           minibuffer-completion-predicate))))))
+      (throw 'katalog-recoll-export (cons 'dired files))))
+
+  (after! embark
+    (consult-recoll-embark-setup)))
 
 (map! :leader
       (:prefix ("k" . "katalog")
        :desc "Import documents" "i" #'katalog-import
        :desc "Open inbox" "I" #'katalog-inbox
        :desc "Open catalog" "k" #'katalog-catalog
+       :desc "Move marked files to inbox" "c" #'katalog-move-to-inbox
        :desc "Search documents" "s" #'katalog-search))
 
 (map! :after dired
       :map dired-mode-map
       :prefix ("k" . "katalog")
-      :desc "Copy to inbox" "i" #'katalog-copy-to-inbox)
+      :desc "Move to inbox" "i" #'katalog-move-to-inbox)
 
 
 
