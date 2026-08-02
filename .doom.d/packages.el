@@ -59,6 +59,7 @@
 (package! agent-shell)
 (package! shell-maker)
 (package! acp)
+(package! eat)
 
 (package! org-xopp
   :recipe (:host github :repo "mahmoodsh36/org-xopp"

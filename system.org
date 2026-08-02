@@ -1,0 +1,435 @@
+#+AUTHOR: Andrej Golovskis
+#+auto_tangle: t
+#+STARTUP: show2levels
+
+System packages, desktop configuration (Gnome) and the tangled setup scripts.
+
+* Table of Contents :toc:
+- [[#system][System]]
+  - [[#init][Init]]
+  - [[#stow][Stow]]
+  - [[#system-1][System]]
+  - [[#programs][Programs]]
+  - [[#utility][Utility]]
+  - [[#shell][Shell]]
+  - [[#jetbrains][Jetbrains]]
+  - [[#hardware][Hardware]]
+- [[#gnome][Gnome]]
+  - [[#general][General]]
+  - [[#keybindings][Keybindings]]
+  - [[#workspace][Workspace]]
+  - [[#extensions][Extensions]]
+
+* System
+Installation of core system packages
+
+- Use ~:tangle~ to remove from adding into a file
+- Use no ~:dir /sudo::~ to ask for sudo password
+  reboot
+- Use ~:results~ output silent to print to new buffer
+
+** Init
+Initializing everything that is needed to start emacs 
+*** Precondition
+Install git and sudo for further steps.
+#+begin_src shell :results output silent :cache no /sudo::
+su -
+apt -y install git
+apt -y install sudo
+adduser [USER] sudo
+logout
+
+#+end_src
+  
+*** Upgrade
+Run first update and upgrade of a system
+
+#+begin_src shell :results output silent :cache no :tangle scripts/init.sh :mkdirp yes :dir /sudo::
+
+sudo apt -y update
+sudo apt -y upgrade
+
+#+end_src
+*** GNOME desktop
+#+begin_src shell :results output silent :cache no :tangle scripts/init.sh :mkdirp yes :dir /sudo::
+
+sudo apt -y install gnome-core
+sudo apt purge -y \
+  gnome-contacts \
+  gnome-maps \
+  gnome-weather \
+  gnome-clocks \
+  gnome-characters \
+  gnome-connections \
+  yelp
+
+sudo apt purge firefox-esr
+sudo apt autoremove
+
+sudo apt install -y gnome-shell-extension-manager
+
+#+end_src
+
+*** Essentials
+
+#+begin_src shell :results output silent :cache no :tangle scripts/init.sh :mkdirp yes :dir /sudo::
+
+sudo apt -y install git
+sudo apt -y install curl
+sudo apt -y install wget
+sudo apt -y install libfuse2
+sudo apt -y install stow
+
+# FONTS
+sudo apt install fonts-firacode
+sudo apt install fonts-jetbrains-mono
+
+#+end_src
+
+*** Emacs
+
+Install doom emacs
+
+#+begin_src shell :results output silent :cache no :tangle scripts/init.sh :mkdirp yes :dir /sudo::
+
+sudo apt remove -y --autoremove emacs emacs-common
+
+sudo apt install -y emacs-gtk
+sudo apt install -y ripgrep fd-find
+
+rm -rf /home/"$USER"/.emacs.d/
+git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
+
+echo "export PATH=$PATH:$HOME/.emacs.d/bin" >> ~/.bash_profile
+source ~/.bash_profile
+
+doom install
+doom doctor
+
+#+end_src
+
+*** Stow for dotfiles
+#+begin_src shell :results output silent :cache no :tangle scripts/init.sh :mkdirp yes :dir /sudo::
+rm -rf ~/.doom.d
+rm -rf ~/.qtile/config.py
+stow . 
+
+doom sync
+
+#+end_src
+** Stow
+
+#+begin_src shell :results output silent :cache no :tangle scripts/init.sh :mkdirp yes :dir /sudo::
+stow -D -v -t "$HOME" .
+stow -S -v --no-folding -t "$HOME" .
+#+end_src
+
+** System
+*** Build tools
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+sudo apt install -y build-essential \
+                    cmake \
+                    libtool \
+                    libvterm-dev
+
+#+end_src
+*** Utilities
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+sudo apt install -y btop \
+                    #alsa-utils \
+                    fastfetch
+
+#+end_src
+
+*** Python
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+sudo apt install -y python3-pip python3-venv
+
+#+end_src
+
+*** Flatpak
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+sudo apt install flatpak
+
+# For KDE
+#sudo apt install plasma-discover-backend-flatpak
+
+# Flatpak repo
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+#+end_src
+*** Docker
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt-get remove $pkg; done
+
+# Add Docker's official GPG key:
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add the repository to Apt sources:
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+sudo usermod -aG docker $USER
+newgrp docker
+
+docker run hello-world
+
+#+end_src
+
+*** KVM / qemu
+
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+sudo apt install -y
+  qemu-kvm \
+  libvirt-daemon-system \
+  libvirt-clients \
+  bridge-utils \
+  virt-manager \ 
+  qemu-guest-agent \
+  virt-install \
+  qemu-utils \
+  cloud-image-utils \
+  curl \
+  ovmf
+
+sudo adduser $USER libvirt
+sudo adduser $USER kvm
+
+sudo systemctl start libvirtd
+sudo systemctl enable libvirtd
+
+#+end_src
+
+*** Ansible
+
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+sudo apt install -y software-properties-common
+sudo apt install -y ansible
+
+#+end_src
+*** Qtile
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+sudo apt install -y qtile python3-psutil \
+                          python3-pulsectl
+
+#+end_src
+*** Alacrity
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+sudo apt install -y alacritty
+
+#+end_src
+*** Rofi
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+sudo apt install -y rofi
+
+#+
+*** Rust
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+#+
+** Programs
+*** KeePassXC
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+# KeepassXC
+flatpak install -y --system flathub org.keepassxc.KeePassXC
+
+#+end_src
+**** Notes
+- Add browser extension
+- Add ssh agent 
+*** Spotify
+
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+# Spotify
+flatpak install -y --system flathub com.spotify.Client
+#+end_src
+*** VeraCrypt
+
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+# VeraCrypt
+sudo add-apt-repository -y ppa:unit193/encryption
+sudo apt-get install -y veracrypt
+
+#+end_src
+
+*** pCloud
+- Download from: https://www.pcloud.com/how-to-install-pcloud-drive-linux.html?download=electron-64
+- Start ./pcloud
+*** Creality Studio
+- Download from https://github.com/CrealityOfficial/CrealityPrint/releases latest
+*** Zen
+Install through zen installer (on site), otherwise the keepassxc won't work
+
+Deprecated: 
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+sudo apt -y remove firefox-esr
+sudo apt -y purge firefox-esr
+
+sudo apt autoremove
+
+flatpak install -y flathub app.zen_browser.zen
+
+#+end_src
+** Utility
+*** Katalog
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+# Utils for katalog
+
+sudo apt install -y ocrmypdf tesseract-ocr tesseract-ocr-deu tesseract-ocr-eng poppler-utils recoll
+
+#+end_src
+** Shell
+
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+echo 'deb http://download.opensuse.org/repositories/shells:/fish:/release:/4/Debian_13/ /' | sudo tee /etc/apt/sources.list.d/shells:fish:release:4.list
+curl -fsSL https://download.opensuse.org/repositories/shells:fish:release:4/Debian_13/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/shells_fish_release_4.gpg > /dev/null
+sudo apt update
+sudo apt install -y fish
+
+#+end_src
+** Jetbrains
+
+#+begin_src shell :results output silent :cache no :tangle no :dir /sudo::
+
+set -e
+
+# Download JetBrains Toolbox
+wget -cO /tmp/jetbrains-toolbox.tar.gz "https://data.services.jetbrains.com/products/download?platform=linux&code=TBA"
+
+# Extract archive to /opt
+tar -xzf /tmp/jetbrains-toolbox.tar.gz -C /opt
+
+# Find extracted folder (e.g. /opt/jetbrains-toolbox-3.0.1.59888)
+DIR="$(ls -d /opt/jetbrains-toolbox-* | sort -V | tail -n 1)"
+
+# Cleanup archive
+rm -f /tmp/jetbrains-toolbox.tar.gz
+
+echo "JetBrains Toolbox installed in $DIR"
+#+end_src
+After install start inside DIR the jetbrains file
+
+** Hardware
+*** Xencelabs
+Install drivers: https://www.xencelabs.com/us/support/download-drivers
+
+* Gnome
+** General
+#+begin_src shell :results output silent :cache no :tangle no
+
+# SET key to use AltGr for german
+gsettings set org.gnome.desktop.interface enable-hot-corners false
+gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+altgr-intl')]"
+gsettings set org.gnome.desktop.input-sources mru-sources "[('xkb', 'us+altgr-intl')]"
+gsettings set org.gnome.desktop.input-sources xkb-options "['ctrl:nocaps']"
+
+
+# Set input sources: US (AltGr intl) + Russian (standard)
+gsettings set org.gnome.desktop.input-sources sources \
+"[('xkb', 'us+altgr-intl'), ('xkb', 'ru')]"
+
+# Ensure MRU matches exactly (prevents ghost layouts)
+gsettings set org.gnome.desktop.input-sources mru-sources \
+"[('xkb', 'us+altgr-intl'), ('xkb', 'ru')]"
+
+
+# Time format
+gsettings set org.gnome.desktop.interface clock-format '24h'
+gsettings set org.gnome.desktop.interface clock-show-weekday true
+gsettings set org.gnome.system.locale region 'de_DE.UTF-8'
+gsettings set org.gnome.desktop.calendar show-weekdate true
+
+
+#+end_src
+
+** Keybindings
+
+#+begin_src shell :results output silent :cache no :tangle no
+
+# Caps Lock becomes Control
+gsettings set org.gnome.desktop.input-sources xkb-options "['ctrl:nocaps']"
+
+# (Optional) Ensure Alt+Shift switches layouts
+gsettings set org.gnome.desktop.wm.keybindings switch-input-source "['<Control>space']"
+
+# Register custom keybinding paths
+gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings \
+"['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', \
+'/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/', \
+'/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/']"
+
+# --- Super+B -> Default Browser ---
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name 'Browser'
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command 'xdg-open https://'
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding '<Super>b'
+
+# --- Super+Return -> Terminal  ---
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ name 'Terminal'
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ command "emacsclient -c -a emacs -e '(eshell)' "
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ binding '<Super><Shift>Return'
+
+# --- Super+E -> Emacs (WITH TRAILING SPACE) ---
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ name 'Emacs'
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ command 'emacsclient -c -a emacs '
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ binding '<Super>e'
+
+# --- Super+L -> Lock screen ---
+gsettings set org.gnome.settings-daemon.plugins.media-keys screensaver "['<Super>l']"
+
+# --- Super+W -> Close window ---
+gsettings set org.gnome.desktop.wm.keybindings close "['<Super>w']"
+
+#+end_src
+
+** Workspace
+#+begin_src shell :results output silent :cache no :tangle no
+
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-1 "['<Control>1']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-2 "['<Control>2']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-3 "['<Control>3']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-4 "['<Control>4']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-5 "['<Control>5']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-6 "['<Control>6']"
+
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-1 "['<Shift><Control>1']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-2 "['<Shift><Control>2']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-3 "['<Shift><Control>3']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-4 "['<Shift><Control>4']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-5 "['<Shift><Control>5']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-6 "['<Shift><Control>6']"
+
+#+end_src
+
+** Extensions
+- Forge
+- Space bar
+  - Only for numbers 
+- Just perfection
+  - Animation: Almost none

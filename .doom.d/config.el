@@ -76,6 +76,10 @@
       :desc "Toggle Eshell popup"
       "o t" #'+eshell/toggle)
 
+(use-package! eat
+  :commands eat
+  :hook (eshell-load . eat-eshell-mode))
+
 ;; Human readable dired size 
 (setq dired-listing-switches "-alh")
 (setq dired-human-readable t)
