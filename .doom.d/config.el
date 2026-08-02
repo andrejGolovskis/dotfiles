@@ -24,8 +24,6 @@
 (setq org-directory "~/Data/base/20_notes/21_kontur")
 (setq denote-directory "~/Data/base/20_notes/21_kontur")
 
-;(desktop-save-mode 1)
-
 (use-package org-auto-tangle
   :defer t
   :hook (org-mode . org-auto-tangle-mode)
