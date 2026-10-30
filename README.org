@@ -2,11 +2,15 @@
 #+STARTUP: show2levels
 
 My dotfiles, managed with [[https://www.gnu.org/software/stow/][stow]] and written as literate org files.
+The repository lives at =~/Workspace/dotfiles=; =~/dotfiles= can be a symlink
+to it to preserve existing Stow links and paths.
 
 * Contents
-- [[./system.org][system.org]] - system packages, Gnome settings, setup scripts
 - [[./emacs.org][emacs.org]] - Doom Emacs configuration
 - [[./TECHNICAL-DOC.org][TECHNICAL-DOC.org]] - cheatsheets and notes
+
+System installation and setup live in the separate provisioning project at
+=~/Workspace/provisioning/system.org=.
 
 * Layout
 #+begin_example
@@ -14,8 +18,6 @@ My dotfiles, managed with [[https://www.gnu.org/software/stow/][stow]] and writt
 |-- README.org        # this index
 |-- TECHNICAL-DOC.org # cheatsheet
 |-- emacs.org         # tangles to .doom.d/
-|-- system.org        # tangles to scripts/
 |-- .doom.d/          # Doom config (stowed)
-|-- .config/          # qtile, rofi (stowed)
-`-- scripts/          # tangled setup scripts
+`-- .config/          # qtile, rofi (stowed)
 #+end_example

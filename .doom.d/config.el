@@ -21,8 +21,12 @@
 
 (add-hook 'window-setup-hook 'toggle-frame-maximized t)
 
-(setq org-directory "~/Data/base/20_notes/21_kontur")
-(setq denote-directory "~/Data/base/20_notes/21_kontur")
+(setq org-directory "~/Data/10_los")
+(setq denote-directory "~/Data/20_lis")
+(setq org-roam-directory "~/Data/20_lis/")
+
+(after! org-roam
+  (org-roam-db-autosync-mode))
 
 (use-package org-auto-tangle
   :defer t
@@ -63,8 +67,8 @@
 (setenv "PATH" (concat (expand-file-name "~/.local/bin") ":" (getenv "PATH")))
 
 ;; Katalog - document management
-(defvar katalog-inbox "~/Data/base/00_inbox/docs/")
-(defvar katalog-catalog "~/Data/base/30_docs/")
+(defvar katalog-inbox "~/Data/00_inbox/docs/")
+(defvar katalog-catalog "~/Data/70_docs/")
 
 (defun katalog-import ()
   (interactive)
@@ -166,7 +170,14 @@
 
 (after! agent-shell
   (setq agent-shell-header-style 'text
-        agent-shell-show-welcome-message t))
+        agent-shell-show-welcome-message t)
+
+  (set-popup-rule! "^\\*agent-shell"
+    :side 'right
+    :size 0.3
+    :select t
+    :quit nil
+    :ttl nil))
 
 (use-package! gptel
   :config

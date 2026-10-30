@@ -2,4 +2,5 @@
 \.git
 \.gitignore
 \.Xresources
-^/scripts$
+^/\.agent-shell$
+^/\.idea$
