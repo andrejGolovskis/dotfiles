@@ -12,6 +12,11 @@
 (setq user-full-name "Andrej Golovskis"
       user-mail-address "andrej@golovskis.de")
 
+(use-package! eat
+  :hook
+  ((eshell-load . eat-eshell-mode)
+   (eshell-load . eat-eshell-visual-command-mode)))
+
 (setq doom-font (font-spec :family "Fira Code" :size 36))
 (setq doom-theme 'doom-sourcerer)
 

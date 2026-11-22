@@ -10,6 +10,7 @@ Doom Emacs configuration, tangled into ~/.doom.d/ on save.
 - [[#config][Config]]
   - [[#header][Header]]
   - [[#user][User]]
+  - [[#shell][Shell]]
   - [[#ui--fonts][UI & fonts]]
   - [[#org--denote][Org & denote]]
   - [[#dired][Dired]]
@@ -297,6 +298,13 @@ Identity used by GPG, email, file templates.
 (setq user-full-name "Andrej Golovskis"
       user-mail-address "andrej@golovskis.de")
 
+#+END_SRC
+** Shell
+#+BEGIN_SRC emacs-lisp
+(use-package! eat
+  :hook
+  ((eshell-load . eat-eshell-mode)
+   (eshell-load . eat-eshell-visual-command-mode)))
 #+END_SRC
 
 ** UI & fonts
